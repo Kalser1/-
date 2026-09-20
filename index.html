@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="description" content="Квиз по переводу чисел между системами счисления и кодам UTF-8. Работает офлайн, можно установить на телефон.">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="РАЗРЯДКА">
+<title>РАЗРЯДКА</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link id="favicon" rel="icon" href="icon-192.png">
+<style>
+:root{
+  --fR:0;--fG:255;--fB:65;
+  --2R:159;--2G:239;--2B:0;
+  --3R:0;--3G:255;--3B:102;
+  --bg1:#000;
+  --bg2:#020902;
+  --card:rgba(0,0,0,.5);
+  --card-solid:#030d04;
+  --line:rgba(var(--fR),var(--fG),var(--fB),.25);
+  --text:#d2ffd2;
+  --muted:#3f9e4f;
+  --accent:#00ff41;
+  --accent2:#9fef00;
+  --ok:#00ff66;
+  --warn:#ffd166;
+  --bad:#ff3b3b;
+  --shadow:0 0 0 1px rgba(var(--fR),var(--fG),var(--fB),.1),0 18px 50px rgba(0,0,0,.75);
+  --glow:0 0 18px rgba(var(--fR),var(--fG),var(--fB),.35);
+  --mono:'Cascadia Mono','JetBrains Mono','Fira Code',Consolas,'SF Mono','Courier New',monospace;
+}
+html[data-theme="bw"]{
+  --fR:255;--fG:255;--fB:255;
+  --2R:255;--2G:255;--2B:255;
+  --3R:255;--3G:255;--3B:255;
+  --accent:#f0f0f0;
+  --accent2:#dcdcdc;
+  --ok:#ffffff;
+  --warn:#c9c9c9;
+  --bad:#7c7c7c;
+  --line:rgba(255,255,255,.3);
+  --text:#f2f2f2;
+  --muted:#9a9a9a;
+  --card:rgba(0,0,0,.55);
+  --card-solid:#0a0a0a;
+  scrollbar-color:#f0f0f0 rgba(0,0,0,.6);
+}
+html[data-theme="amber"]{
+  --fR:255;--fG:176;--fB:0;
+  --2R:255;--2G:207;--2B:94;
+  --3R:255;--3G:210;--3B:77;
+  --accent:#ffb000;
+  --accent2:#ffcf5e;
+  --ok:#ffd24d;
+  --warn:#ffc266;
+  --bad:#8a6b2a;
+  --text:#ffe9b8;
+  --muted:#b8862a;
+  --card:rgba(12,8,0,.5);
+  --card-solid:#1a0f00;
+  scrollbar-color:#ffb000 rgba(0,0,0,.6);
+}
+html[data-theme="cyan"]{
+  --fR:0;--fG:229;--fB:255;
+  --2R:127;--2G:242;--2B:255;
+  --3R:102;--3G:242;--3B:255;
+  --accent:#00e5ff;
+  --accent2:#7ff2ff;
+  --ok:#66f2ff;
+  --warn:#b8e6ff;
+  --bad:#4b7a85;
+  --text:#d2f8ff;
+  --muted:#2f9db0;
+  --card:rgba(0,10,14,.55);
+  --card-solid:#041820;
+  scrollbar-color:#00e5ff rgba(0,0,0,.6);
+}
+html[data-theme="blue"]{
+  --fR:77;--fG:158;--fB:255;
+  --2R:156;--2G:201;--2B:255;
+  --3R:127;--3G:181;--3B:255;
+  --accent:#4d9eff;
+  --accent2:#9cc9ff;
+  --ok:#7fb5ff;
+  --warn:#a9c8ff;
+  --bad:#5a6f8a;
+  --text:#d4e4ff;
+  --muted:#4a73a8;
+  --card:rgba(5,10,22,.55);
+  --card-solid:#061426;
+  scrollbar-color:#4d9eff rgba(0,0,0,.6);
+}
+html[data-theme="purple"]{
+  --fR:180;--fG:80;--fB:255;
+  --2R:215;--2G:162;--2B:255;
+  --3R:201;--3G:138;--3B:255;
+  --accent:#b450ff;
+  --accent2:#d7a2ff;
+  --ok:#c98aff;
+  --warn:#e0c2ff;
+  --bad:#7a5c8f;
+  --text:#eed8ff;
+  --muted:#8a5bb5;
+  --card:rgba(12,5,26,.55);
+  --card-solid:#150826;
+  scrollbar-color:#b450ff rgba(0,0,0,.6);
+}
+html[data-theme="red"]{
+  --fR:255;--fG:65;--fB:65;
+  --2R:255;--2G:154;--2B:122;
+  --3R:255;--3G:138;--3B:106;
+  --accent:#ff4141;
+  --accent2:#ff9a7a;
+  --ok:#ff8a6a;
+  --warn:#ffc79a;
+  --bad:#8f4a42;
+  --text:#ffdfdf;
+  --muted:#b84f43;
+  --card:rgba(18,4,4,.55);
+  --card-solid:#180606;
+  scrollbar-color:#ff4141 rgba(0,0,0,.6);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+html{scrollbar-color:#00ff41 rgba(0,0,0,.6)}
+body{
+  font-family:var(--mono);
+  background:
+    radial-gradient(900px 600px at 75% -10%,rgba(var(--fR),var(--fG),var(--fB),.09),transparent 60%),
+    radial-gradient(700px 500px at 110% 95%,rgba(var(--2R),var(--2G),var(--2B),.05),transparent 60%),
+    linear-gradient(rgba(0,0,0,.93),rgba(0,6,0,.96)),
+    url('7c9edee2-85c6-42bf-8d7d-8477d3ab1d44.png') center/cover;
+  background-attachment:fixed;
+  color:var(--text);
+  min-height:100dvh;
+  display:flex;
+  flex-direction:column;
+}
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:5;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.16) 0 1px,transparent 1px 3px);
+}
+html[data-theme="bw"] body{
+  background:
+    radial-gradient(900px 600px at 75% -10%,rgba(255,255,255,.05),transparent 60%),
+    radial-gradient(700px 500px at 110% 95%,rgba(255,255,255,.04),transparent 60%),
+    linear-gradient(rgba(0,0,0,.95),rgba(0,0,0,.98));
+  isolation:isolate;
+}
+html[data-theme="bw"] body::before{
+  content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:url('7c9edee2-85c6-42bf-8d7d-8477d3ab1d44.png') center/cover fixed;
+  filter:grayscale(1) brightness(.5) contrast(1.1);
+  opacity:.35;
+}
+::selection{background:rgba(var(--fR),var(--fG),var(--fB),.3)}
+header{
+  position:sticky;top:0;z-index:20;
+  display:flex;align-items:center;gap:12px;
+  padding:12px 18px;padding-top:calc(12px + env(safe-area-inset-top));
+  background:rgba(0,0,0,.82);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+}
+.brand{display:flex;flex-direction:column;cursor:pointer;user-select:none;line-height:1.35}
+.brand-logo{
+  width:38px;height:38px;border-radius:8px;object-fit:cover;flex:none;cursor:pointer;
+  border:1px solid var(--line);box-shadow:0 0 14px rgba(var(--fR),var(--fG),var(--fB),.35);
+}
+.brand .top{
+  font-family:var(--mono);font-weight:700;font-size:.8rem;letter-spacing:.04em;
+  word-break:break-word;color:var(--accent);
+  text-shadow:0 0 12px rgba(var(--fR),var(--fG),var(--fB),.6);
+}
+.brand .sub{font-size:.62rem;color:var(--muted)}
+.hud{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.hud .chip{
+  display:flex;align-items:baseline;gap:6px;white-space:nowrap;
+  background:rgba(0,0,0,.6);border:1px solid var(--line);
+  padding:7px 11px;border-radius:8px;font-size:.74rem;font-weight:600;color:var(--muted);
+}
+.hud .chip b{color:var(--accent);font-variant-numeric:tabular-nums;text-shadow:0 0 8px rgba(var(--fR),var(--fG),var(--fB),.5)}
+.hud .chip.streak b{color:var(--ok)}
+.hud-btn{
+  border:1px solid var(--line);background:rgba(0,0,0,.6);color:var(--text);
+  padding:8px 13px;border-radius:8px;font-size:.74rem;font-weight:700;cursor:pointer;line-height:1;
+  transition:all .15s;
+}
+.hud-btn:hover{border-color:var(--accent);color:var(--accent);box-shadow:var(--glow)}
+main{flex:1;width:100%;max-width:920px;margin:0 auto;padding:20px 16px 48px}
+.screen{display:none;animation:fade .28s ease}
+.screen.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+.hero{display:flex;align-items:end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:6px 0 6px}
+h1.title{font-family:var(--mono);font-size:clamp(.9rem,3.4vw,1.25rem);margin:0;font-weight:700;letter-spacing:.03em;word-break:break-word;color:var(--accent);text-shadow:var(--glow)}
+.title-caption{color:var(--muted);font-size:.72rem;margin-top:4px}
+p.sub{color:var(--muted);margin:4px 0 18px;font-size:.82rem;line-height:1.6}
+
+.termbar{
+  display:flex;align-items:center;gap:10px;
+  margin:-20px -20px 16px;padding:8px 14px;
+  background:rgba(0,0,0,.55);
+  border-bottom:1px solid var(--line);
+  border-radius:20px 20px 0 0;
+  font-size:.74rem;
+}
+.termbar .dots{color:rgba(var(--fR),var(--fG),var(--fB),.7);letter-spacing:3px;font-size:.62rem}
+.termbar .tt{color:var(--accent);font-weight:700;white-space:nowrap}
+.termbar .ttc{color:var(--muted);margin-left:auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:right}
+.termbar-top{margin:0 0 10px;border-radius:10px;border:1px solid var(--line)}
+.caret-line::after{content:'▊';margin-left:3px;color:var(--accent);animation:blink 1.1s steps(1) infinite}
+
+.menu-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px}
+.mode-card{
+  background:rgba(0,0,0,.55);border:1px solid var(--line);border-radius:14px;
+  padding:18px;cursor:pointer;color:var(--text);text-align:left;
+  display:flex;flex-direction:column;gap:10px;overflow:hidden;
+  white-space:normal;overflow-wrap:break-word;
+  box-shadow:0 14px 40px rgba(0,0,0,.6);
+  transition:all .18s;
+}
+.mode-card:hover,.mode-card:focus-visible{
+  transform:translateY(-3px);
+  border-color:var(--accent);
+  box-shadow:0 0 22px rgba(var(--fR),var(--fG),var(--fB),.3),0 14px 40px rgba(0,0,0,.6);
+  background:rgba(0,12,2,.7);
+}
+.mode-card .tt-row{font-size:.7rem;color:var(--muted);font-weight:700}
+.mode-card .tt-row b{color:var(--accent)}
+.mode-card .icon{
+  width:46px;height:46px;border-radius:10px;display:grid;place-items:center;
+  font-family:var(--mono);font-weight:800;font-size:1rem;color:var(--accent);
+  background:rgba(0,0,0,.6);border:1px solid var(--line);
+  box-shadow:0 0 14px rgba(var(--fR),var(--fG),var(--fB),.25);
+}
+.mode-card h3{margin:0;font-size:1rem;color:var(--accent)}
+.mode-card p{margin:0;color:var(--muted);font-size:.8rem;line-height:1.55;flex:1}
+.mode-card .tag{font-size:.72rem;color:var(--accent2);font-weight:700}
+
+.settings-bar{
+  display:flex;gap:10px;flex-wrap:wrap;align-items:center;
+  background:rgba(0,0,0,.55);border:1px solid var(--line);border-radius:14px;
+  padding:12px;margin-bottom:18px;box-shadow:var(--shadow);
+  position:sticky;top:62px;z-index:10;backdrop-filter:blur(14px);
+}
+.settings-bar select,.settings-bar .btn{flex:1;min-width:110px}
+.settings-bar .slabel{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:.74rem;white-space:nowrap}
+select,button,input,textarea{font:inherit;color:var(--text)}
+select,button{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+select{
+  background:var(--card-solid);border:1px solid var(--line);border-radius:10px;
+  padding:10px 12px;outline:none;cursor:pointer;min-width:0;
+  appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M1 1l4 4 4-4' stroke='%2300ff41' fill='none' stroke-width='2' stroke-linecap='round'/></svg>");
+  background-repeat:no-repeat;background-position:right 12px center;padding-right:30px;
+}
+select:focus-visible{box-shadow:0 0 0 2px rgba(var(--fR),var(--fG),var(--fB),.4),0 0 14px rgba(var(--fR),var(--fG),var(--fB),.25)}
+.btn{
+  border:1px solid var(--line);border-radius:10px;background:rgba(0,0,0,.6);
+  padding:11px 18px;font-weight:700;cursor:pointer;font-size:.78rem;letter-spacing:.05em;
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  text-transform:uppercase;
+  transition:all .15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.btn:active{transform:scale(.97)}
+.btn-primary{
+  border-color:var(--accent);background:var(--accent);color:#001a05;
+  box-shadow:0 0 18px rgba(var(--fR),var(--fG),var(--fB),.35);
+}
+.btn-primary:hover{filter:brightness(1.15)}
+.btn-ghost{color:var(--text)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent);box-shadow:var(--glow)}
+.btn-mini{padding:7px 12px;font-size:.7rem}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+
+.switch{display:inline-flex;align-items:center;gap:9px;cursor:pointer;user-select:none;line-height:1;font-size:.74rem;color:var(--muted)}
+.switch input{display:none}
+.switch .slider{
+  width:46px;height:25px;border-radius:6px;background:rgba(0,0,0,.7);
+  border:1px solid var(--line);position:relative;transition:.2s;flex:none;
+}
+.switch .slider::after{
+  content:'';position:absolute;top:3px;left:3px;width:17px;height:17px;
+  background:var(--muted);transition:.2s;border-radius:2px;
+}
+.switch input:checked+.slider{border-color:var(--accent);box-shadow:0 0 10px rgba(var(--fR),var(--fG),var(--fB),.35)}
+.switch input:checked+.slider::after{left:24px;background:var(--accent);box-shadow:0 0 8px rgba(var(--fR),var(--fG),var(--fB),.8)}
+
+.volume-row{display:flex;align-items:center;gap:12px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.volume-row .vol-label{color:var(--muted);font-size:.74rem;flex:none}
+.volume-row input[type=range]{flex:1;min-width:0;-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer;padding:8px 0}
+.volume-row input[type=range]::-webkit-slider-runnable-track{height:5px;border-radius:3px;background:rgba(0,0,0,.7);border:1px solid var(--line)}
+.volume-row input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;width:16px;height:16px;margin-top:-6.5px;
+  border-radius:4px;background:var(--accent);border:none;
+  box-shadow:0 0 8px rgba(var(--fR),var(--fG),var(--fB),.8);
+}
+.volume-row input[type=range]::-moz-range-track{height:5px;border-radius:3px;background:rgba(0,0,0,.7);border:1px solid var(--line)}
+.volume-row input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:4px;background:var(--accent);border:none;box-shadow:0 0 8px rgba(var(--fR),var(--fG),var(--fB),.8)}
+.volume-row .vol-val{color:var(--accent);font-weight:700;font-size:.78rem;flex:none;min-width:42px;text-align:right;font-variant-numeric:tabular-nums}
+.volume-row.disabled{opacity:.4;pointer-events:none}
+.volume-note{color:var(--muted);font-size:.72rem;margin-top:8px}
+
+.timer-wrap{display:none;flex-direction:column;align-items:center;margin:0 0 6px;padding:4px 0}
+.ring-box{position:relative;width:150px;height:150px}
+.ring{width:150px;height:150px;transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:rgba(var(--fR),var(--fG),var(--fB),.12);stroke-width:10}
+.ring-fg{fill:none;stroke:var(--accent);stroke-width:10;stroke-linecap:round;filter:drop-shadow(0 0 6px rgba(var(--fR),var(--fG),var(--fB),.8));transition:stroke-dashoffset 1s linear,stroke .35s}
+.ring-fg.warn{stroke:var(--warn);filter:drop-shadow(0 0 6px rgba(255,209,102,.7))}
+.ring-fg.danger{stroke:var(--bad);filter:drop-shadow(0 0 6px rgba(255,59,59,.7))}
+.ring-num{
+  position:absolute;inset:0;display:grid;place-items:center;
+  font:800 2.3rem var(--mono);font-variant-numeric:tabular-nums;color:var(--accent);
+  text-shadow:0 0 14px rgba(var(--fR),var(--fG),var(--fB),.7);
+}
+.timer-label{color:var(--muted);font-size:.7rem;margin-top:2px}
+.no-timer-badge{
+  display:inline-block;background:rgba(var(--fR),var(--fG),var(--fB),.08);border:1px solid rgba(var(--fR),var(--fG),var(--fB),.4);
+  color:var(--ok);padding:3px 10px;border-radius:6px;font-size:.68rem;font-weight:700;
+}
+
+.card{background:rgba(0,0,0,.5);border:1px solid var(--line);border-radius:20px;padding:20px;margin-bottom:16px;box-shadow:var(--shadow)}
+.q-label{color:var(--muted);font-size:.78rem;margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.q-label::before{content:'>';color:var(--accent);font-weight:700}
+.q-label .pill{
+  background:rgba(0,0,0,.6);border:1px solid var(--line);
+  color:var(--accent);padding:3px 10px;border-radius:6px;font-size:.68rem;font-weight:700;
+}
+.q-value{
+  font:800 clamp(1.8rem,6.5vw,2.7rem) var(--mono);
+  color:var(--accent);
+  text-shadow:0 0 20px rgba(var(--fR),var(--fG),var(--fB),.55);
+  word-break:break-all;line-height:1.3;letter-spacing:.04em;
+}
+.q-value::after{content:'▊';animation:blink 1.1s steps(1) infinite;font-size:.5em;vertical-align:middle}
+.prompt{font-size:.82rem;margin:10px 0 0;color:var(--muted);line-height:1.7}
+.prompt code{font-family:var(--mono);font-size:.76rem;color:var(--accent);background:rgba(var(--fR),var(--fG),var(--fB),.07);padding:1px 6px;border-radius:5px}
+
+.word-line{font:800 clamp(1.5rem,7vw,2.4rem) var(--mono);letter-spacing:.12em;line-height:1.6;overflow-wrap:anywhere;color:var(--text)}
+.word-line .focus-char{
+  display:inline-block;padding:.05em .28em;border-radius:8px;
+  background:rgba(var(--fR),var(--fG),var(--fB),.1);border:1px solid var(--accent);color:var(--accent);
+  box-shadow:0 0 14px rgba(var(--fR),var(--fG),var(--fB),.35);
+}
+.badge{
+  display:inline-block;font-size:.6rem;font-weight:700;padding:2px 8px;border-radius:4px;vertical-align:middle;border:1px solid var(--line);
+}
+.badge.lat{background:rgba(var(--2R),var(--2G),var(--2B),.1);color:var(--accent2)}
+.badge.cyr{background:rgba(var(--fR),var(--fG),var(--fB),.12);color:var(--accent)}
+.badge.digit{background:rgba(var(--3R),var(--3G),var(--3B),.1);color:var(--ok)}
+
+.table-wrap{overflow-x:auto;margin-top:14px;border-radius:10px;border:1px solid var(--line);background:rgba(0,0,0,.4)}
+table{width:100%;border-collapse:collapse;font-size:.8rem;min-width:460px}
+th,td{padding:10px 13px;text-align:left;white-space:nowrap}
+th{color:var(--muted);font-size:.66rem;letter-spacing:.08em;background:rgba(var(--fR),var(--fG),var(--fB),.05);border-bottom:1px solid var(--line)}
+td.c,th.c{text-align:center}
+tr.is-focus td{background:rgba(var(--fR),var(--fG),var(--fB),.09);color:var(--accent)}
+tr.is-focus td code{color:var(--accent);border-color:var(--accent)}
+.focus-mark{color:var(--ok);font-size:.76rem}
+code{font-family:var(--mono);font-size:.78rem;color:var(--text);background:rgba(var(--fR),var(--fG),var(--fB),.06);border:1px solid rgba(var(--fR),var(--fG),var(--fB),.18);padding:1px 6px;border-radius:5px}
+
+.answer-row{display:flex;gap:10px;margin-bottom:10px;position:relative}
+.answer-row input{
+  flex:1;min-width:0;background:#000;border:1px solid var(--line);
+  border-radius:10px;padding:15px 16px;font:600 1.05rem var(--mono);outline:none;
+  caret-color:var(--accent);color:var(--accent);
+}
+.answer-row input::placeholder{color:var(--muted);opacity:.7}
+.answer-row input:focus{border-color:var(--accent);box-shadow:0 0 14px rgba(var(--fR),var(--fG),var(--fB),.25)}
+.answer-row .btn{padding:15px 22px;font-size:.85rem}
+#feedback{min-height:24px;font-size:.82rem;margin-bottom:10px;line-height:1.6}
+#feedback::before{content:'$ ';color:var(--accent);font-weight:700}
+#feedback.ok{color:var(--ok)}
+#feedback.bad{color:var(--bad)}
+#feedback.neutral{color:var(--muted)}
+#feedback .explain{margin-top:5px;color:var(--muted)}
+#feedback b{font-weight:800}
+.auto-hint{text-align:center;color:var(--muted);font-size:.72rem;margin:0 0 10px}
+
+.stat-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.stat-card{flex:1;min-width:110px;background:rgba(0,0,0,.5);border:1px solid var(--line);border-radius:12px;padding:14px;text-align:center;box-shadow:var(--shadow)}
+.stat-card .n{font:800 1.4rem var(--mono);color:var(--accent);text-shadow:0 0 10px rgba(var(--fR),var(--fG),var(--fB),.4)}
+.stat-card .l{font-size:.66rem;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.05em}
+
+.hist{display:flex;flex-direction:column;gap:7px;font-size:.76rem}
+.hist .item{
+  display:flex;gap:10px;align-items:center;background:rgba(0,0,0,.4);
+  border-left:3px solid var(--ok);border-radius:6px;padding:9px 13px;overflow:hidden;
+}
+.hist .item.err{border-left-color:var(--bad)}
+.hist .mono{font-family:var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hist .res{margin-left:auto;color:var(--muted);flex:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.draft-card{border-radius:14px;box-shadow:var(--shadow)}
+.draft-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.draft-head .lbl{font-weight:700;font-size:.8rem;color:var(--accent)}
+.draft-head .lbl small{color:var(--muted);font-weight:500;font-size:.64rem}
+.draft-head .acts{margin-left:auto;display:flex;gap:8px}
+#draftArea{
+  width:100%;min-height:120px;background:#000;border:1px solid var(--line);
+  border-radius:10px;padding:14px;font:500 .92rem/1.7 var(--mono);outline:none;resize:vertical;
+  caret-color:var(--accent);color:var(--text);
+}
+#draftArea:focus{border-color:var(--accent);box-shadow:0 0 14px rgba(var(--fR),var(--fG),var(--fB),.22)}
+#draftArea::placeholder{color:var(--muted);opacity:.5}
+
+.conv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:14px}
+.conv-cell{background:rgba(0,0,0,.5);border:1px solid var(--line);border-radius:12px;padding:15px}
+.conv-cell .l{font-size:.66rem;color:var(--muted);margin-bottom:7px;letter-spacing:.05em;text-transform:uppercase}
+.conv-cell .v{font:700 1.15rem var(--mono);word-break:break-all;color:var(--accent)}
+.char-cell{
+  margin-top:12px;display:flex;align-items:center;gap:16px;
+  background:rgba(0,0,0,.5);border:1px solid var(--line);border-radius:12px;padding:14px;
+}
+.char-cell .sym{font:800 2.1rem var(--mono);min-width:70px;text-align:center;color:var(--accent);text-shadow:0 0 14px rgba(var(--fR),var(--fG),var(--fB),.5)}
+.char-cell .bytes{font-family:var(--mono);font-size:.8rem;color:var(--muted);line-height:1.8}
+.char-cell .bytes b{color:var(--accent)}
+
+.conv-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.conv-tab{font-size:.72rem;padding:9px 14px;color:var(--muted)}
+.conv-tab.active{border-color:var(--accent);color:var(--accent);box-shadow:var(--glow);background:rgba(var(--fR),var(--fG),var(--fB),.07)}
+.txt-table{margin-top:14px}
+.txt-ch{display:inline-block;min-width:28px;text-align:center;border:1px solid var(--line);border-radius:6px;padding:2px 8px;background:rgba(0,0,0,.4);color:var(--accent)}
+.txt-sum{display:flex;flex-direction:column;gap:7px;margin-top:14px}
+.txt-sum>div{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;font-family:var(--mono);font-size:.8rem}
+.txt-sum .l{color:var(--accent);font-weight:700;flex:none}
+.txt-sum code{word-break:break-all;white-space:pre-wrap}
+
+.help-box{background:rgba(0,0,0,.5);border:1px solid var(--line);border-radius:14px;padding:15px;font-size:.78rem;line-height:1.8;color:var(--muted)}
+.help-box b{color:var(--accent)}
+.help-box ul{margin:8px 0 0;padding-left:20px}
+.help-box code{font-size:.7rem}
+
+.theme-row{display:flex;gap:10px;flex-wrap:wrap}
+.theme-b{
+  flex:1 1 150px;min-width:150px;border:1px solid var(--line);background:rgba(0,0,0,.6);
+  padding:11px 16px;border-radius:10px;font-weight:700;font-size:.74rem;letter-spacing:.05em;
+  text-transform:uppercase;cursor:pointer;--tb:var(--accent);color:var(--tb);
+  transition:all .15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.theme-b:hover{border-color:var(--accent);color:var(--accent);box-shadow:var(--glow)}
+.theme-b.active{border-color:var(--accent);color:var(--accent);background:rgba(var(--fR),var(--fG),var(--fB),.08);box-shadow:var(--glow)}
+.theme-note{color:var(--muted);font-size:.74rem;margin-top:12px}
+.mono{font-family:var(--mono)}
+
+#toast{
+  position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(24px);
+  background:#000;border:1px solid var(--accent);color:var(--accent);
+  padding:13px 20px;border-radius:10px;font-weight:700;font-size:.8rem;font-family:var(--mono);
+  opacity:0;pointer-events:none;transition:.25s;z-index:50;max-width:90vw;text-align:center;
+  box-shadow:0 0 22px rgba(var(--fR),var(--fG),var(--fB),.3),0 16px 50px rgba(0,0,0,.8);
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+footer{text-align:center;padding:20px;color:var(--muted);font-size:.7rem}
+
+@media(max-width:600px){
+  .settings-bar{position:static;flex-direction:column;align-items:stretch}
+  .settings-bar select{width:100%}
+  .settings-bar .btn{width:100%}
+  .answer-row{flex-direction:column}
+  .hud .c-streak,.hud .c-acc{display:none}
+  .ring-box{width:132px;height:132px}
+  .ring{width:132px;height:132px}
+  .ring-num{font-size:2rem}
+  .menu-grid{grid-template-columns:1fr}
+  .draft-head .acts{margin-left:0;width:100%}
+  .draft-head .acts .btn{flex:1}
+  .termbar .ttc{display:none}
+}
+@media(max-width:380px){
+  header{gap:8px}
+  .brand .top{font-size:.68rem}
+  .hud-btn{padding:7px 10px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <img class="brand-logo" src="icon-192.png" alt="РАЗРЯДКА" onclick="showMenu()">
+  <div class="brand" onclick="showMenu()">
+    <span class="top" id="brandTop">РАЗРЯДКА</span>
+    <span class="sub">перевод систем счисления</span>
+  </div>
+  <div class="hud">
+    <span class="chip">Очки <b id="chipScore">0</b></span>
+    <span class="chip streak c-streak">Серия <b id="chipStreak">0</b></span>
+    <span class="chip acc c-acc">Точность <b id="chipAcc">—</b></span>
+    <button class="hud-btn" onclick="showConverter()">Конвертер</button>
+    <button class="hud-btn" onclick="showSettings()">Настройки</button>
+    <button class="hud-btn" onclick="showMenu()">Меню</button>
+  </div>
+</header>
+
+<main>
+  <section id="screen-menu" class="screen">
+    <div class="hero">
+      <h1 class="title" id="gameTitle">СС</h1>
+      <div class="title-caption" id="gameTitleCaption"></div>
+    </div>
+    <p class="sub">Тренируй перевод чисел между системами счисления и разбирайся в кодах UTF-8.</p>
+    <div class="menu-grid" id="menuGrid"></div>
+    <div class="help-box" style="margin-top:18px">
+      <b>Как играть:</b> на экране появляется задача перевода числа в другую СС. Введи ответ и нажми «Проверить» или Enter. За верный ответ — очки, серия усиливает множитель. Таймер можно выключить, расчёты веди в черновике внизу.
+    </div>
+  </section>
+
+  <section id="screen-settings" class="screen">
+    <div class="hero"><h1 class="title">Настройки</h1></div>
+    <p class="sub">Оформление в терминальном стиле — семь тем. Выбор запоминается в браузере.</p>
+    <div class="card">
+      <div class="q-label">тема оформления</div>
+      <div class="theme-row" id="themeRow"></div>
+      <div class="theme-note" id="themeNote"></div>
+    </div>
+    <div class="card">
+      <div class="q-label">звук</div>
+      <label class="switch"><input type="checkbox" id="soundToggle"><span class="slider"></span><span>звуковые эффекты</span></label>
+      <div class="theme-note">разные короткие сигналы: клики, верный/неверный ответ, смена темы.</div>
+      <div class="volume-row" id="volumeRow">
+        <span class="vol-label">громкость</span>
+        <input type="range" id="volumeSlider" min="0" max="100" value="100" aria-label="громкость">
+        <span class="vol-val" id="volumeVal">100%</span>
+      </div>
+      <div class="volume-note" id="volumeNote"></div>
+    </div>
+    <div class="card">
+      <div class="q-label">установка на телефон</div>
+      <div class="theme-note" style="margin-top:0">открой игру в браузере → «Установить приложение» / «Добавить на главный экран». Работает офлайн после первой загрузки.</div>
+    </div>
+  </section>
+
+  <section id="screen-game" class="screen">
+    <div id="gameSettings"></div>
+
+    <div class="timer-wrap" id="timerWrap">
+      <div class="ring-box">
+        <svg class="ring" viewBox="0 0 150 150">
+          <circle class="ring-bg" cx="75" cy="75" r="64"></circle>
+          <circle class="ring-fg" id="ringFg" cx="75" cy="75" r="64"></circle>
+        </svg>
+        <span class="ring-num" id="ringNum">120</span>
+      </div>
+      <div class="timer-label">секунд на задачу</div>
+    </div>
+
+    <div id="gameBody"></div>
+    <div class="auto-hint" id="autoHint"></div>
+
+    <div class="card draft-card">
+      <div class="termbar">
+        <span class="dots">•••</span>
+        <span class="tt">Черновик</span>
+      </div>
+      <div class="draft-head">
+        <span class="lbl">Черновик <small>сохраняется автоматически</small></span>
+        <span class="acts">
+          <button class="btn btn-ghost btn-mini" id="draftIns">Вставить задание</button>
+          <button class="btn btn-ghost btn-mini" id="draftClr">Очистить</button>
+        </span>
+      </div>
+      <textarea id="draftArea" placeholder="Сюда можно записывать расчёты: разложить число на степени двойки, переписать байты, прикинуть ответ..."></textarea>
+    </div>
+  </section>
+
+  <section id="screen-converter" class="screen">
+    <div class="hero"><h1 class="title">Конвертер</h1></div>
+    <p class="sub">Перевод числа во все системы счисления, а текст — в байты UTF-8 сразу во всех СС.</p>
+    <div class="card" style="padding:14px">
+      <div class="conv-tabs">
+        <button class="btn conv-tab active" data-m="num">перевод числа</button>
+        <button class="btn conv-tab" data-m="txt">перевод текста</button>
+      </div>
+      <div class="settings-bar" style="position:static;box-shadow:none;margin-bottom:0">
+        <input id="convInput" style="flex:2;min-width:150px;background:#000;border:1px solid var(--line);border-radius:10px;padding:11px 13px;font-family:var(--mono);font-weight:600;color:var(--accent);caret-color:var(--accent);outline:none" placeholder="123" inputmode="text" spellcheck="false">
+        <select id="convBase" aria-label="Base"><option value="2">2</option><option value="8">8</option><option value="10" selected>10</option><option value="16">16</option></select>
+      </div>
+    </div>
+    <div class="card" id="convOut"></div>
+  </section>
+</main>
+
+<footer>РАЗРЯДКА — HTML + CSS + JS, работает офлайн.</footer>
+<div id="toast"></div>
+
+<script>
+const BASES={2:'двоичная',8:'восьмеричная',10:'десятичная',16:'шестнадцатеричная'};
+const SUF={2:'₂',8:'₈',10:'₁₀',16:'₁₆'};
+const ASCII_U='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const ASCII_L='abcdefghijklmnopqrstuvwxyz';
+const DIGITS='0123456789';
+const CYR_U='АБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ';
+const CYR_L='абвгдежзиклмнопрстуфхцчшщъыьэюя';
+const PUNCT='!?.,;:- ';
+
+const DIFF={
+  easy:{label:'Лёгкий',max:63,time:90,pool:'ascii'},
+  medium:{label:'Средний',max:1023,time:120,pool:'cyr'},
+  hard:{label:'Сложный',max:65535,time:150,pool:'all'}
+};
+const RING_C=2*Math.PI*64;
+
+const WORDS={
+  promptC:[
+    d=>`Из ${d.srcBase}-й системы в ${d.dstBase}-ю. Пиши ответ в поле.`,
+    d=>`Запиши это число в ${d.dstBase}-й системе счисления.`,
+    d=>`А как это число выглядит в ${d.dstBase}-й системе?`,
+    d=>`Переведи в ${d.dstBase}-ю СС. Застрял — черновик ниже.`
+  ],
+  promptU:[
+    q=>`Переведи «${q.chars[q.targetIndex].ch}» (№${q.targetIndex+1}) в ${q.targetBase}-ю СС.`,
+    q=>`Символ №${q.targetIndex+1}: какой он в ${q.targetBase}-й системе?`,
+    q=>`Найди в таблице «${q.chars[q.targetIndex].ch}» и переведи в ${q.targetBase}-ю.`
+  ],
+  ok:['Верно!','Точно!','В яблочко!','Так держать!','Правильно!','Красиво!'],
+  bad:['Не угадал','Мимо','Почти','Ошибка','Не вышло'],
+  timeout:'Время вышло',
+  correct:['Правильный ответ: ','Верный ответ: ','Было так: '],
+  neutralOn:['введи ответ и жми Enter','жду ответ…','ниже поле для ответа'],
+  neutralOff:['таймер выключен — не спеши','без таймера, решай спокойно']
+};
+
+const S={mode:'classic',diff:'easy',timerOn:true,score:0,streak:0,total:0,right:0,answered:false,timerId:null,timeLeft:0,current:null,hist:[],toastT:null,taskNo:0,autoT:null,autoIv:null};
+const $=id=>document.getElementById(id);
+const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const choice=a=>a[Math.floor(Math.random()*a.length)];
+
+function fmt(num,base){
+  let s=num.toString(base).toUpperCase();
+  if(base===2){
+    s=s.padStart(Math.ceil(s.length/4)*4,'0');
+    s=s.replace(/(.{4})/g,'$1 ').trim();
+  }else if(base===16){
+    s=s.padStart(Math.ceil(s.length/2)*2,'0');
+    s=s.replace(/(.{2})/g,'$1 ').trim();
+  }
+  return s;
+}
+function parseWhole(str,base){
+  const s=str.toUpperCase().replace(/[\s_]+/g,'');
+  if(!s)return null;
+  for(const ch of s){
+    const d=parseInt(ch,base);
+    if(isNaN(d)||d>=base)return null;
+  }
+  return parseInt(s,base);
+}
+function utf8Bytes(cp){
+  if(cp<0x80)return[cp];
+  if(cp<0x800)return[0xC0|(cp>>6),0x80|(cp&0x3F)];
+  if(cp<0x10000)return[0xE0|(cp>>12),0x80|((cp>>6)&0x3F),0x80|(cp&0x3F)];
+  return[0xF0|(cp>>18),0x80|((cp>>12)&0x3F),0x80|((cp>>6)&0x3F),0x80|(cp&0x3F)];
+}
+const isCyr=ch=>/[\u0400-\u04FF]/.test(ch);
+const isDigit=ch=>/\d/.test(ch);
+function charKind(ch){
+  if(isCyr(ch))return'<span class="badge cyr">кир</span>';
+  if(isDigit(ch))return'<span class="badge digit">цифра</span>';
+  return'<span class="badge lat">лат</span>';
+}
+
+function genWord(diff){
+  const pool=diff==='easy'?ASCII_U+ASCII_L+DIGITS+' ':(diff==='medium'?ASCII_U+ASCII_L+DIGITS+CYR_U+CYR_L:ASCII_U+ASCII_L+DIGITS+CYR_U+CYR_L+PUNCT);
+  const len=diff==='easy'?rnd(3,4):(diff==='medium'?rnd(4,6):rnd(5,8));
+  let w='';
+  for(let i=0;i<len;i++)w+=choice(pool);
+  w=w.trim();
+  if([...w].length<2)return genWord(diff);
+  return w;
+}
+function genUTF8Question(){
+  const word=genWord(S.diff);
+  const chars=[...word].map(ch=>({ch,bytes:utf8Bytes(ch.codePointAt(0))}));
+  const targetBase=choice([2,8,16]);
+  const targetIndex=rnd(0,chars.length-1);
+  const t=chars[targetIndex];
+  return{type:'utf8',word,chars,targetBase,targetIndex,expected:t.bytes.map(b=>b.toString(targetBase).toUpperCase()).join(' '),expectedArr:t.bytes.slice()};
+}
+function genClassicQuestion(){
+  let b2;
+  const b1=choice([2,8,10,16]);
+  do{b2=choice([2,8,10,16]);}while(b2===b1);
+  const dec=rnd(0,DIFF[S.diff].max);
+  return{type:'classic',srcBase:b1,dstBase:b2,dec,expected:dec.toString(b2).toUpperCase()};
+}
+
+function clearAuto(){
+  clearTimeout(S.autoT);
+  clearInterval(S.autoIv);
+  const h=$('autoHint');
+  if(h)h.textContent='';
+}
+function newQuestion(){
+  clearAuto();
+  clearInterval(S.timerId);
+  S.answered=false;
+  S.taskNo++;
+  S.current=S.mode==='utf8'?genUTF8Question():genClassicQuestion();
+  renderGame();
+  renderDraftButtons();
+  if(S.timerOn)startTimer(DIFF[S.diff].time);
+  const inp=$('answerInput');
+  if(inp){inp.value='';inp.disabled=false;$('checkBtn').disabled=false;inp.focus({preventScroll:true});}
+  const fb=$('feedback');
+  fb.className='neutral';
+  fb.innerHTML=S.timerOn?choice(WORDS.neutralOn):choice(WORDS.neutralOff);
+}
+
+function startTimer(sec){
+  S.timeLeft=sec;
+  const wrap=$('timerWrap'),fg=$('ringFg'),num=$('ringNum');
+  wrap.style.display='flex';
+  num.classList.remove('pulse');
+  num.textContent=sec;
+  fg.style.transition='none';
+  fg.style.strokeDashoffset=RING_C;
+  requestAnimationFrame(()=>{
+    fg.style.transition='stroke-dashoffset 1s linear, stroke .35s';
+    setRing(1,'');
+  });
+  S.timerId=setInterval(()=>{
+    S.timeLeft--;
+    if(S.timeLeft<=0){
+      clearInterval(S.timerId);
+      submit('',true);
+      return;
+    }
+    num.textContent=S.timeLeft;
+    const pct=S.timeLeft/sec;
+    const cls=pct>0.45?'':(pct>0.18?' warn':' danger');
+    setRing(pct,cls);
+  },1000);
+}
+function setRing(pct,cls){
+  const fg=$('ringFg');
+  fg.style.strokeDashoffset=RING_C*(1-pct);
+  fg.setAttribute('class','ring-fg'+cls);
+}
+function stopTimer(){
+  clearInterval(S.timerId);
+  const w=$('timerWrap');
+  if(w)w.style.display='none';
+}
+
+function renderGame(){
+  const q=S.current;
+  let html='';
+  if(q.type==='classic'){
+    html=`<div class="card">
+      <div class="termbar">
+        <span class="dots">•••</span>
+        <span class="tt">задача №${S.taskNo}</span>
+        <span class="ttc">${S.diff==='easy'?'самая простая':(S.diff==='medium'?'средней паршивости':'сложная, на подумать')} · серия ${S.streak}</span>
+      </div>
+      <div class="q-label">
+        <span>переведи число</span>
+        <span class="pill">из ${q.srcBase} СС → в ${q.dstBase} СС</span>
+        ${S.timerOn?'':'<span class="no-timer-badge">без таймера</span>'}
+      </div>
+      <div class="q-value">${fmt(q.dec,q.srcBase)}</div>
+      <div class="prompt">${choice(WORDS.promptC)(q)}</div>
+    </div>`;
+  }else{
+    const idx=q.targetIndex;
+    const wordHtml=q.chars.map(c=>`<span class="focus-char">${c.ch}</span>`).join('');
+    const rows=q.chars.map((c,i)=>{
+      const focus=i===idx?' is-focus':'';
+      const mark=i===idx?'<b class="focus-mark">← отвечаем про него</b>':'';
+      return`<tr class="${focus}">
+        <td class="c">${i+1}</td>
+        <td class="c">${c.ch} ${charKind(c.ch)}</td>
+        <td class="c">${c.bytes.length} байт</td>
+        <td><code>${c.bytes.join(' · ')}</code></td>
+        <td class="c">${mark}</td>
+      </tr>`;
+    }).join('');
+    html=`<div class="card">
+      <div class="termbar">
+        <span class="dots">•••</span>
+        <span class="tt">задача №${S.taskNo}</span>
+        <span class="ttc">utf-8 · ${DIFF[S.diff].label.toLowerCase()}</span>
+      </div>
+      <div class="q-label">
+        <span>UTF-8: переведи код символа</span>
+        <span class="pill">целевая СС: ${q.targetBase}</span>
+        ${S.timerOn?'':'<span class="no-timer-badge">без таймера</span>'}
+      </div>
+      <div class="word-line">${wordHtml}</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th class="c">№</th><th class="c">символ</th><th class="c">байт</th><th>utf-8 код (десятичный)</th><th class="c"></th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+      <div class="prompt">${choice(WORDS.promptU)(q)}${q.chars[idx].bytes.length>1?' Байты пиши через пробел: <code>11010000 10110000</code>':''}</div>
+    </div>`;
+  }
+  const ph=q.type==='classic'
+    ?'например: '+(q.dstBase===2?'0100 0101':(q.dstBase===16?'1F 4A':'8010'))
+    :(q.chars[q.targetIndex].bytes.length>1?'коды байтов через пробел':'код символа');
+  html+=`<div class="answer-row">
+    <input id="answerInput" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${ph}">
+    <button class="btn btn-primary" id="checkBtn">Проверить</button>
+  </div>
+  <div id="feedback" class="neutral"></div>`;
+  $('gameBody').innerHTML=html;
+  $('answerInput').addEventListener('keydown',e=>{if(e.key==='Enter')submit('',false);});
+  $('checkBtn').addEventListener('click',()=>submit('',false));
+  renderStats();
+}
+
+function renderDraftButtons(){
+  const q=S.current;
+  $('draftIns').textContent=q.type==='classic'?'вставить число':'вставить коды';
+}
+
+function renderStats(){
+  $('chipScore').textContent=S.score;
+  $('chipStreak').textContent=S.streak;
+  $('chipAcc').textContent=S.total?Math.round(S.right/S.total*100)+'%':'—';
+}
+
+function checkAnswer(raw){
+  const q=S.current;
+  if(q.type==='classic'){
+    const v=parseWhole(raw,q.dstBase);
+    return v!==null&&v===q.dec?{ok:true}:{ok:false};
+  }
+  const tokens=raw.toUpperCase().split(/[\s,;._·|-]+/).filter(Boolean);
+  if(tokens.length!==q.expectedArr.length)return{ok:false};
+  const vals=tokens.map(t=>parseWhole(t,q.targetBase));
+  if(vals.some(v=>v===null))return{ok:false};
+  for(let i=0;i<vals.length;i++)if(vals[i]!==q.expectedArr[i])return{ok:false};
+  return{ok:true};
+}
+
+function submit(raw,timeout){
+  if(S.answered)return;
+  clearInterval(S.timerId);
+  clearAuto();
+  const q=S.current;
+  const input=$('answerInput');
+  S.answered=true;
+  if(input)input.disabled=true;
+  $('checkBtn').disabled=true;
+  const value=raw!==''?raw:(input?input.value:'').trim();
+  S.total++;
+  const res=timeout?{ok:false,timeout:true}:checkAnswer(value);
+  const fb=$('feedback');
+  if(res.ok){
+    sfx('win');
+    S.right++;S.streak++;
+    const pts=10*Math.min(S.streak,5);
+    S.score+=pts;
+    fb.className='ok';
+    fb.innerHTML=`<b>${res.timeout?'':choice(WORDS.ok)}</b> +${pts}${Math.min(S.streak,5)>1?' ×'+Math.min(S.streak,5):''}`;
+    addHist(true,q,value);
+    toast(choice(WORDS.ok));
+  }else{
+    sfx('lose');
+    S.streak=0;
+    fb.className='bad';
+    fb.innerHTML=`<b>${res.timeout?WORDS.timeout:choice(WORDS.bad)}</b>
+      <div class="explain">${choice(WORDS.correct)}<code>${q.expected}</code>${q.type==='classic'?' · '+q.dec+'₁₀':''}</div>`;
+    addHist(false,q,value);
+    toast(res.timeout?WORDS.timeout:choice(WORDS.bad),'bad');
+  }
+  renderStats();
+  let c=5;
+  const hint=$('autoHint');
+  hint.textContent='следующая задача через '+c+'с';
+  S.autoIv=setInterval(()=>{
+    c--;
+    if(c<=0){clearInterval(S.autoIv);return;}
+    hint.textContent='следующая задача через '+c+'с';
+  },1000);
+  S.autoT=setTimeout(()=>newQuestion(),5000);
+}
+
+function addHist(ok,q,val){
+  S.hist.unshift({ok,val:val||'—',
+    task:q.type==='classic'?`${fmt(q.dec,q.srcBase)}${SUF[q.srcBase]}->${q.expected}${SUF[q.dstBase]}`:`«${q.chars.map(c=>c.ch).join('')}»#${q.targetIndex+1}->${q.expected}`});
+  if(S.hist.length>8)S.hist.pop();
+  let h='<div class="hist">';
+  for(const it of S.hist){
+    h+=`<div class="item ${it.ok?'':'err'}"><span class="mono">${it.task}</span><span class="res">${it.ok?'[+]':'[-]'} ${it.val}</span></div>`;
+  }
+  h+='</div>';
+  const old=$('histCard');
+  if(old)old.remove();
+  const div=document.createElement('div');
+  div.className='card';
+  div.id='histCard';
+  div.innerHTML='<div class="q-label">журнал</div>'+h;
+  $('gameBody').appendChild(div);
+}
+
+function renderMenu(){
+  const modes=[
+    {id:'classic',icon:'101',title:'Числа',tt:'▸ numbers --convert',desc:'Случайное число в одной СС — переведи в другую. двоичная, восьмеричная, десятичная и шестнадцатеричная.',tag:'[2 | 8 | 10 | 16]'},
+    {id:'utf8',icon:'UTF',title:'UTF-8 текст',tt:'▸ utf8 --decode',desc:'Текст + таблица UTF-8: находишь номер символа и переводишь его в выбранную СС. Есть кириллица и многобайтовые коды.',tag:'[текст → utf-8 → СС]'}
+  ];
+  let h='';
+  for(const m of modes){
+    h+=`<button class="mode-card" onclick="startMode('${m.id}')">
+      <span class="tt-row"><b>${m.tt}</b></span>
+      <div class="icon">${m.icon}</div>
+      <h3>${m.title}</h3>
+      <p>${m.desc}</p>
+      <span class="tag">${m.tag}</span>
+    </button>`;
+  }
+  $('menuGrid').innerHTML=h;
+}
+
+function startMode(mode){
+  S.mode=mode;
+  show('screen-game');
+  renderSettings();
+  newQuestion();
+  renderStats();
+}
+
+function renderSettings(){
+  let extra='';
+  if(S.mode==='classic'){
+    const cls=s=>`<option value="${s}">${s}${SUF[s]} · ${BASES[s]}</option>`;
+    extra=`<select id="srcSel" aria-label="исходная СС">${['rand',2,8,10,16].map(s=>s==='rand'?'<option value="rand">исходная: любая</option>':cls(s)).join('')}</select>
+      <span style="color:var(--muted);flex:0">→</span>
+      <select id="dstSel" aria-label="целевая СС">${['rand',2,8,10,16].map(s=>s==='rand'?'<option value="rand">целевая: любая</option>':cls(s)).join('')}</select>`;
+  }else{
+    const cls=s=>`<option value="${s}">${s}${SUF[s]} · ${BASES[s]}</option>`;
+    extra=`<select id="dstSel" aria-label="целевая СС">${[2,8,16].map(cls).join('')}</select>`;
+  }
+  $('gameSettings').innerHTML=`
+    <div class="termbar termbar-top">
+      <span class="dots">•••</span>
+      <span class="tt">настройки</span>
+      <span class="ttc">${S.mode==='classic'?'числа':'utf-8 текст'} · ${DIFF[S.diff].label}</span>
+    </div>
+    <div class="settings-bar">
+      <select id="modeSel" aria-label="режим">
+        <option value="classic" ${S.mode==='classic'?'selected':''}>режим: числа</option>
+        <option value="utf8" ${S.mode==='utf8'?'selected':''}>режим: utf-8 текст</option>
+      </select>
+      <select id="diffSel" aria-label="сложность">${Object.keys(DIFF).map(d=>`<option value="${d}" ${S.diff===d?'selected':''}>${DIFF[d].label}</option>`).join('')}</select>
+      ${extra}
+      <label class="switch"><input type="checkbox" id="timerToggle" ${S.timerOn?'checked':''}><span class="slider"></span><span>Таймер</span></label>
+      <button class="btn btn-primary" id="nextBtn" style="flex:0;flex-shrink:0">ещё задачу</button>
+    </div>`;
+  $('modeSel').addEventListener('change',e=>{S.mode=e.target.value;renderSettings();newQuestion();});
+  $('diffSel').addEventListener('change',e=>{S.diff=e.target.value;newQuestion();});
+  const src=$('srcSel'),dst=$('dstSel');
+  if(src)src.addEventListener('change',()=>newQuestion());
+  if(dst)dst.addEventListener('change',()=>newQuestion());
+  $('timerToggle').addEventListener('change',e=>{
+    S.timerOn=e.target.checked;
+    newQuestion();
+  });
+  $('nextBtn').addEventListener('click',()=>newQuestion());
+}
+
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active');}
+function showMenu(){
+  stopTimer();
+  clearAuto();
+  show('screen-menu');
+  renderMenu();
+  renderStats();
+}
+function showConverter(){
+  stopTimer();
+  clearAuto();
+  show('screen-converter');
+  updateConv();
+}
+
+const THEME_KEY='ssq-theme';
+const THEMES={
+  green:{label:'зелёная',fav:'00ff41'},
+  bw:{label:'чёрно-белая',fav:'f0f0f0'},
+  amber:{label:'янтарная',fav:'ffb000'},
+  cyan:{label:'циан',fav:'00e5ff'},
+  blue:{label:'синяя',fav:'4d9eff'},
+  purple:{label:'фиолет',fav:'b450ff'},
+  red:{label:'красная',fav:'ff4141'}
+};
+function renderThemeButtons(){
+  const row=$('themeRow');
+  if(!row)return;
+  row.innerHTML=Object.keys(THEMES).map(t=>
+    `<button class="theme-b" data-t="${t}" style="--tb:#${THEMES[t].fav}" aria-pressed="false">${THEMES[t].label}</button>`
+  ).join('');
+  row.querySelectorAll('.theme-b').forEach(b=>b.addEventListener('click',()=>setTheme(b.dataset.t)));
+}
+function setTheme(t){
+  t=THEMES[t]?t:'green';
+  document.documentElement.dataset.theme=t;
+  try{localStorage.setItem(THEME_KEY,t);}catch(e){}
+  const row=$('themeRow');
+  if(row)row.querySelectorAll('.theme-b').forEach(b=>{
+    const on=b.dataset.t===t;b.classList.toggle('active',on);b.setAttribute('aria-pressed',on);
+  });
+  const note=$('themeNote');
+  if(note)note.textContent='текущая тема: '+THEMES[t].label;
+}
+function initTheme(){
+  let t='green';
+  try{t=localStorage.getItem(THEME_KEY)||'green';}catch(e){}
+  setTheme(THEMES[t]?t:'green');
+}
+function showSettings(){
+  stopTimer();
+  clearAuto();
+  show('screen-settings');
+}
+
+let CONV_MODE='num';
+function convToBase(bytesGroup,base){
+  switch(base){
+    case 16:return bytesGroup.map(b=>b.toString(16).toUpperCase().padStart(2,'0')).join(' ');
+    case 2:return bytesGroup.map(b=>b.toString(2).padStart(8,'0')).join(' ');
+    case 8:return bytesGroup.map(b=>b.toString(8).padStart(3,'0')).join(' ');
+  }
+}
+function updateConv(){
+  const raw=$('convInput').value;
+  const isTxt=CONV_MODE==='txt';
+  $('convBase').style.display=isTxt?'none':'';
+  $('convInput').placeholder=isTxt?'текст в любой кодировке: привет, Привет!':'123';
+  let html='';
+  if(!raw.trim()){
+    html=isTxt?'<div style="color:var(--muted)">начни печатать текст — каждый символ сразу разложится на байты UTF-8 во всех системах (16, 2, 8).</div>':'<div style="color:var(--muted)">введи число и выбери систему — получишь перевод во все остальные + UTF-8 байты символа, если это код символа.</div>';
+    $('convOut').innerHTML=html;
+    return;
+  }
+  if(isTxt){
+    const allHex=[],allBin=[],allOct=[];
+    let rows='';
+    for(const ch of raw){
+      const cp=ch.codePointAt(0);
+      const bytes=utf8Bytes(cp);
+      allHex.push(...bytes);allBin.push(...bytes);allOct.push(...bytes);
+      rows+=`<tr>
+        <td class="c"><span class="txt-ch">${ch}</span></td>
+        <td class="c">${charKind(ch)}</td>
+        <td class="c">U+${cp.toString(16).toUpperCase().padStart(4,'0')}</td>
+        <td><code>${convToBase(bytes,16)}</code></td>
+        <td><code>${convToBase(bytes,2)}</code></td>
+        <td><code>${convToBase(bytes,8)}</code></td>
+      </tr>`;
+    }
+    html=`<div class="txt-sum">
+      <div style="color:var(--muted)">весь текст → байты utf-8</div>
+      <div><b class="l">16</b><code>${convToBase(allHex,16)}</code></div>
+      <div><b class="l">2</b><code>${convToBase(allBin,2)}</code></div>
+      <div><b class="l">8</b><code>${convToBase(allOct,8)}</code></div>
+    </div>
+    <div class="table-wrap txt-table">
+      <table>
+        <thead><tr><th class="c">символ</th><th class="c">тип</th><th class="c">код</th><th>utf-8 в 16 СС</th><th>utf-8 в 2 СС</th><th>utf-8 в 8 СС</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+  }else{
+    const base=parseInt($('convBase').value,10);
+    const v=parseWhole(raw,base);
+    if(v===null){
+      html='<div style="color:var(--bad)">некорректные цифры для этой СС.</div>';
+    }else{
+      html='<div class="conv-grid">';
+      for(const b of[2,8,10,16]){
+        html+=`<div class="conv-cell"><div class="l">${BASES[b]}${SUF[b]}</div><div class="v">${fmt(v,b)}</div></div>`;
+      }
+      html+='</div>';
+      if(v>=0x20&&v<=0x10FFFF){
+        const ch=String.fromCodePoint(v);
+        const bytes=utf8Bytes(v);
+        html+=`<div class="char-cell">
+          <div class="sym">${ch}</div>
+          <div>
+            <div style="font-weight:700;color:var(--accent)">U+${v.toString(16).toUpperCase().padStart(4,'0')}</div>
+            <div class="bytes">utf-8 (dec): <b>${bytes.join('·')}</b><br>utf-8 (hex): <b>${bytes.map(b=>b.toString(16).toUpperCase().padStart(2,'0')).join(' ')}</b></div>
+          </div>
+        </div>`;
+      }
+    }
+  }
+  $('convOut').innerHTML=html;
+}
+
+const AC={ctx:null};
+let VOLUME=1;
+function tone(f,t0,d,type,v,f2){
+  if(!AC.ctx)AC.ctx=new(window.AudioContext||window.webkitAudioContext)();
+  if(AC.ctx.state==='suspended')AC.ctx.resume();
+  const o=AC.ctx.createOscillator(),g=AC.ctx.createGain();
+  o.type=type||'square';
+  o.frequency.setValueAtTime(f,AC.ctx.currentTime+t0);
+  if(f2)o.frequency.exponentialRampToValueAtTime(f2,AC.ctx.currentTime+t0+d);
+  const target=(v||0.1)*VOLUME;
+  if(target<0.001)return;
+  g.gain.setValueAtTime(0.0001,AC.ctx.currentTime+t0);
+  g.gain.exponentialRampToValueAtTime(target,AC.ctx.currentTime+t0+0.008);
+  g.gain.exponentialRampToValueAtTime(0.0001,AC.ctx.currentTime+t0+d);
+  o.connect(g);g.connect(AC.ctx.destination);
+  o.start(AC.ctx.currentTime+t0);o.stop(AC.ctx.currentTime+t0+d+.02);
+}
+let SOUND_ON=true;
+function sfx(name){
+  if(!SOUND_ON)return;
+  if(name==='win'){tone(523,0,.1,'square',.1);tone(659,.08,.1,'square',.1);tone(784,.16,.16,'square',.1);}
+  else if(name==='lose'){tone(320,0,.15,'sawtooth',.07,200);}
+  else if(name==='theme'){tone(660,0,.09,'triangle',.09);tone(990,.09,.12,'triangle',.09);}
+  else if(name==='go'){tone(520,0,.06,'square',.09);tone(780,.06,.09,'square',.09);}
+  else if(name==='back'){tone(780,0,.06,'square',.09);tone(520,.06,.09,'square',.09);}
+  else{tone(700,0,.05,'square',.08);}
+}
+document.addEventListener('click',e=>{
+  if(!SOUND_ON)return;
+  const t=e.target.closest('.btn,.hud-btn,.mode-card,.theme-b,select');
+  if(!t)return;
+  if(t.id==='checkBtn')return;
+  if(t.classList.contains('theme-b'))sfx('theme');
+  else if(t.classList.contains('mode-card'))sfx('go');
+  else if(t.classList.contains('hud-btn'))sfx('back');
+  else sfx('click');
+});
+function initSound(){
+  try{SOUND_ON=localStorage.getItem('ssq-sound')!=='0';}catch(e){}
+  try{VOLUME=Math.min(1,Math.max(0,parseFloat(localStorage.getItem('ssq-vol'))||1));}catch(e){}
+  const t=$('soundToggle');
+  if(t){t.checked=SOUND_ON;t.addEventListener('change',()=>{
+    SOUND_ON=t.checked;
+    try{localStorage.setItem('ssq-sound',SOUND_ON?'1':'0');}catch(e){}
+    syncVolumeUI();
+    if(SOUND_ON)sfx('theme');
+  });}
+  const sl=$('volumeSlider'),val=$('volumeVal'),note=$('volumeNote');
+  if(sl){sl.value=Math.round(VOLUME*100);sl.addEventListener('input',()=>{
+    VOLUME=parseInt(sl.value,10)/100;
+    try{localStorage.setItem('ssq-vol',String(VOLUME));}catch(e){}
+    if(val)val.textContent=Math.round(VOLUME*100)+'%';
+    if(SOUND_ON)sfx(VOLUME>0?'click':'');
+  });}
+  if(note)note.textContent=VOLUME<=0?'звук выключен.':'текущая громкость: '+(Math.round(VOLUME*100))+'%';
+  syncVolumeUI();
+}
+function syncVolumeUI(){
+  const sl=$('volumeSlider'),row=$('volumeRow');
+  if(sl)sl.value=Math.round(VOLUME*100);
+  const val=$('volumeVal');
+  if(val)val.textContent=Math.round(VOLUME*100)+'%';
+  if(row)row.classList.toggle('disabled',!SOUND_ON);
+}
+function setVolume(v){
+  VOLUME=Math.min(1,Math.max(0,v));
+  try{localStorage.setItem('ssq-vol',String(VOLUME));}catch(e){}
+  syncVolumeUI();
+}
+
+function toast(msg,kind){
+  const t=$('toast');
+  t.textContent=msg;
+  t.style.borderColor=kind==='bad'?'var(--bad)':'var(--accent)';
+  t.style.color=kind==='bad'?'var(--bad)':'var(--accent)';
+  t.classList.add('show');
+  clearTimeout(S.toastT);
+  S.toastT=setTimeout(()=>t.classList.remove('show'),1500);
+}
+
+function insertDraft(text){
+  const ta=$('draftArea');
+  const s=ta.selectionStart,e=ta.selectionEnd;
+  const cur=ta.value;
+  ta.value=cur.slice(0,s)+(s===e&&cur&&cur[s-1]!=='\n'&&text? (cur[s-1]===' '?'':text.startsWith('\n')?'\n':' ')+text: text)+cur.slice(e);
+  const p=s+ta.value.length-(e-s);
+  ta.focus();
+  ta.setSelectionRange(p,p);
+  saveDraft();
+}
+function saveDraft(){try{localStorage.setItem('ssq-draft',$('draftArea').value);}catch(e){}}
+
+function toBinary(text){
+  return [...text].map(ch=>utf8Bytes(ch.codePointAt(0)).map(b=>b.toString(2).padStart(8,'0')).join(' ')).join(' ');
+}
+const GAME_NAME='РАЗРЯДКА';
+const BINARY_NAME=toBinary(GAME_NAME);
+$('brandTop').textContent=GAME_NAME;
+$('brandTop').title=GAME_NAME;
+$('gameTitle').textContent=GAME_NAME;
+$('gameTitleCaption').textContent='«'+GAME_NAME+'» — имя игры в двоичной системе счисления: '+BINARY_NAME;
+
+$('draftArea').value=(()=>{try{return localStorage.getItem('ssq-draft')||'';}catch(e){return '';}})();
+$('draftArea').addEventListener('input',saveDraft);
+$('draftIns').addEventListener('click',()=>{
+  const q=S.current;
+  insertDraft(q.type==='classic'?`${fmt(q.dec,q.srcBase)}${SUF[q.srcBase]}`:`«${q.chars.map(c=>c.ch).join('')}»${q.chars[q.targetIndex].bytes.join(' ')}`);
+});
+$('draftClr').addEventListener('click',()=>{$('draftArea').value='';saveDraft();$('draftArea').focus();});
+$('convInput').addEventListener('input',updateConv);
+$('convBase').addEventListener('change',updateConv);
+document.querySelectorAll('.conv-tab').forEach(btn=>btn.addEventListener('click',()=>{
+  CONV_MODE=btn.dataset.m;
+  document.querySelectorAll('.conv-tab').forEach(b=>b.classList.toggle('active',b===btn));
+  updateConv();
+}));
+
+renderMenu();
+renderStats();
+show('screen-menu');
+initTheme();
+renderThemeButtons();
+initSound();
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
