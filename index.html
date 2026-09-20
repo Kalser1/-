@@ -159,39 +159,15 @@ html[data-theme="bw"] body::before{
   opacity:.35;
 }
 ::selection{background:rgba(var(--fR),var(--fG),var(--fB),.3)}
-header{
-  position:sticky;top:0;z-index:20;
-  display:flex;align-items:center;gap:12px;
-  padding:12px 18px;padding-top:calc(12px + env(safe-area-inset-top));
-  background:rgba(0,0,0,.82);
-  backdrop-filter:blur(14px);
-  border-bottom:1px solid var(--line);
-}
-.brand{display:flex;flex-direction:column;cursor:pointer;user-select:none;line-height:1.35}
-.brand-logo{
-  width:38px;height:38px;border-radius:8px;object-fit:cover;flex:none;cursor:pointer;
-  border:1px solid var(--line);box-shadow:0 0 14px rgba(var(--fR),var(--fG),var(--fB),.35);
-}
-.brand .top{
-  font-family:var(--mono);font-weight:700;font-size:.8rem;letter-spacing:.04em;
-  word-break:break-word;color:var(--accent);
-  text-shadow:0 0 12px rgba(var(--fR),var(--fG),var(--fB),.6);
-}
-.brand .sub{font-size:.62rem;color:var(--muted)}
-.hud{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.hud .chip{
+.chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 12px}
+.chips .chip{
   display:flex;align-items:baseline;gap:6px;white-space:nowrap;
   background:rgba(0,0,0,.6);border:1px solid var(--line);
   padding:7px 11px;border-radius:8px;font-size:.74rem;font-weight:600;color:var(--muted);
 }
-.hud .chip b{color:var(--accent);font-variant-numeric:tabular-nums;text-shadow:0 0 8px rgba(var(--fR),var(--fG),var(--fB),.5)}
-.hud .chip.streak b{color:var(--ok)}
-.hud-btn{
-  border:1px solid var(--line);background:rgba(0,0,0,.6);color:var(--text);
-  padding:8px 13px;border-radius:8px;font-size:.74rem;font-weight:700;cursor:pointer;line-height:1;
-  transition:all .15s;
-}
-.hud-btn:hover{border-color:var(--accent);color:var(--accent);box-shadow:var(--glow)}
+.chips .chip b{color:var(--accent);font-variant-numeric:tabular-nums;text-shadow:0 0 8px rgba(var(--fR),var(--fG),var(--fB),.5)}
+.chips .chip:nth-child(2) b{color:var(--ok)}
+.menu-actions{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px}
 main{flex:1;width:100%;max-width:920px;margin:0 auto;padding:20px 16px 48px}
 .screen{display:none;animation:fade .28s ease}
 .screen.active{display:block}
@@ -213,7 +189,6 @@ p.sub{color:var(--muted);margin:4px 0 18px;font-size:.82rem;line-height:1.6}
 .termbar .dots{color:rgba(var(--fR),var(--fG),var(--fB),.7);letter-spacing:3px;font-size:.62rem}
 .termbar .tt{color:var(--accent);font-weight:700;white-space:nowrap}
 .termbar .ttc{color:var(--muted);margin-left:auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:right}
-.termbar-top{margin:0 0 10px;border-radius:10px;border:1px solid var(--line)}
 .caret-line::after{content:'▊';margin-left:3px;color:var(--accent);animation:blink 1.1s steps(1) infinite}
 
 .menu-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px}
@@ -247,7 +222,7 @@ p.sub{color:var(--muted);margin:4px 0 18px;font-size:.82rem;line-height:1.6}
   display:flex;gap:10px;flex-wrap:wrap;align-items:center;
   background:rgba(0,0,0,.55);border:1px solid var(--line);border-radius:14px;
   padding:12px;margin-bottom:18px;box-shadow:var(--shadow);
-  position:sticky;top:62px;z-index:10;backdrop-filter:blur(14px);
+  position:sticky;top:8px;z-index:10;backdrop-filter:blur(14px);
 }
 .settings-bar select,.settings-bar .btn{flex:1;min-width:110px}
 .settings-bar .slabel{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:.74rem;white-space:nowrap}
@@ -365,9 +340,9 @@ tr.is-focus td code{color:var(--accent);border-color:var(--accent)}
 .focus-mark{color:var(--ok);font-size:.76rem}
 code{font-family:var(--mono);font-size:.78rem;color:var(--text);background:rgba(var(--fR),var(--fG),var(--fB),.06);border:1px solid rgba(var(--fR),var(--fG),var(--fB),.18);padding:1px 6px;border-radius:5px}
 
-.answer-row{display:flex;gap:10px;margin-bottom:10px;position:relative}
+.answer-row{display:flex;gap:10px;margin-bottom:10px;position:relative;flex-wrap:wrap}
 .answer-row input{
-  flex:1;min-width:0;background:#000;border:1px solid var(--line);
+  flex:1 1 150px;min-width:0;background:#000;border:1px solid var(--line);
   border-radius:10px;padding:15px 16px;font:600 1.05rem var(--mono);outline:none;
   caret-color:var(--accent);color:var(--accent);
 }
@@ -464,8 +439,6 @@ footer{text-align:center;padding:20px;color:var(--muted);font-size:.7rem}
   .settings-bar{position:static;flex-direction:column;align-items:stretch}
   .settings-bar select{width:100%}
   .settings-bar .btn{width:100%}
-  .answer-row{flex-direction:column}
-  .hud .c-streak,.hud .c-acc{display:none}
   .ring-box{width:132px;height:132px}
   .ring{width:132px;height:132px}
   .ring-num{font-size:2rem}
@@ -473,31 +446,15 @@ footer{text-align:center;padding:20px;color:var(--muted);font-size:.7rem}
   .draft-head .acts{margin-left:0;width:100%}
   .draft-head .acts .btn{flex:1}
   .termbar .ttc{display:none}
+  .card{padding:16px}
+  main{padding:14px 12px 40px}
 }
 @media(max-width:380px){
-  header{gap:8px}
-  .brand .top{font-size:.68rem}
-  .hud-btn{padding:7px 10px}
+  .settings-bar .btn{width:100%}
 }
 </style>
 </head>
 <body>
-
-<header>
-  <img class="brand-logo" src="icon-192.png" alt="РАЗРЯДКА" onclick="showMenu()">
-  <div class="brand" onclick="showMenu()">
-    <span class="top" id="brandTop">РАЗРЯДКА</span>
-    <span class="sub">перевод систем счисления</span>
-  </div>
-  <div class="hud">
-    <span class="chip">Очки <b id="chipScore">0</b></span>
-    <span class="chip streak c-streak">Серия <b id="chipStreak">0</b></span>
-    <span class="chip acc c-acc">Точность <b id="chipAcc">—</b></span>
-    <button class="hud-btn" onclick="showConverter()">Конвертер</button>
-    <button class="hud-btn" onclick="showSettings()">Настройки</button>
-    <button class="hud-btn" onclick="showMenu()">Меню</button>
-  </div>
-</header>
 
 <main>
   <section id="screen-menu" class="screen">
@@ -506,14 +463,41 @@ footer{text-align:center;padding:20px;color:var(--muted);font-size:.7rem}
       <div class="title-caption" id="gameTitleCaption"></div>
     </div>
     <p class="sub">Тренируй перевод чисел между системами счисления и разбирайся в кодах UTF-8.</p>
+    <div class="menu-actions">
+      <button class="btn btn-ghost btn-mini" onclick="showConverter()">Конвертер</button>
+      <button class="btn btn-ghost btn-mini" onclick="showSettings()">Настройки</button>
+    </div>
     <div class="menu-grid" id="menuGrid"></div>
     <div class="help-box" style="margin-top:18px">
-      <b>Как играть:</b> на экране появляется задача перевода числа в другую СС. Введи ответ и нажми «Проверить» или Enter. За верный ответ — очки, серия усиливает множитель. Таймер можно выключить, расчёты веди в черновике внизу.
+      <b>Как играть:</b> выбери режим → настройки режима → «Начать игру». На экране появляется задача перевода числа в другую СС. Введи ответ и нажми «Проверить» или Enter. За верный ответ — очки, серия усиливает множитель. Таймер можно выключить, расчёты веди в черновике внизу.
+    </div>
+  </section>
+
+  <section id="screen-setup" class="screen">
+    <div class="hero">
+      <div>
+        <h1 class="title" id="setupTitle">Числа</h1>
+        <div class="title-caption" id="setupCaption">настрой режим и стартуй</div>
+      </div>
+    </div>
+    <p class="sub" id="setupDesc"></p>
+    <div class="card">
+      <div class="q-label">настройки перед стартом</div>
+      <div class="settings-bar" id="setupSettings" style="position:static;box-shadow:none;margin-bottom:0;background:transparent;padding:12px 0 0;border:none"></div>
+      <div class="theme-note" id="setupTimerNote"></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+        <button class="btn btn-primary" id="setupStart" style="flex:1">Начать игру →</button>
+        <button class="btn btn-ghost" onclick="showMenu()">В меню</button>
+      </div>
+    </div>
+    <div class="menu-actions" style="margin-bottom:0">
+      <button class="btn btn-ghost btn-mini" onclick="showConverter()">Конвертер</button>
+      <button class="btn btn-ghost btn-mini" onclick="showSettings()">Настройки</button>
     </div>
   </section>
 
   <section id="screen-settings" class="screen">
-    <div class="hero"><h1 class="title">Настройки</h1></div>
+    <div class="hero"><h1 class="title">Настройки</h1><button class="btn btn-ghost btn-mini" onclick="showMenu()">← Меню</button></div>
     <p class="sub">Оформление в терминальном стиле — семь тем. Выбор запоминается в браузере.</p>
     <div class="card">
       <div class="q-label">тема оформления</div>
@@ -532,13 +516,23 @@ footer{text-align:center;padding:20px;color:var(--muted);font-size:.7rem}
       <div class="volume-note" id="volumeNote"></div>
     </div>
     <div class="card">
+      <div class="q-label">таймер</div>
+      <label class="switch"><input type="checkbox" id="timerSettingToggle"><span class="slider"></span><span>отсчёт времени на задачу</span></label>
+      <div class="theme-note" id="timerSettingNote"></div>
+    </div>
+    <div class="card">
       <div class="q-label">установка на телефон</div>
       <div class="theme-note" style="margin-top:0">открой игру в браузере → «Установить приложение» / «Добавить на главный экран». Работает офлайн после первой загрузки.</div>
     </div>
   </section>
 
   <section id="screen-game" class="screen">
-    <div id="gameSettings"></div>
+    <div class="chips">
+      <span class="chip">Очки <b id="chipScore">0</b></span>
+      <span class="chip">Серия <b id="chipStreak">0</b></span>
+      <span class="chip">Точность <b id="chipAcc">—</b></span>
+      <button class="btn btn-ghost btn-mini" style="margin-left:auto" onclick="showMenu()">В меню</button>
+    </div>
 
     <div class="timer-wrap" id="timerWrap">
       <div class="ring-box">
@@ -571,7 +565,7 @@ footer{text-align:center;padding:20px;color:var(--muted);font-size:.7rem}
   </section>
 
   <section id="screen-converter" class="screen">
-    <div class="hero"><h1 class="title">Конвертер</h1></div>
+    <div class="hero"><h1 class="title">Конвертер</h1><button class="btn btn-ghost btn-mini" onclick="showMenu()">← Меню</button></div>
     <p class="sub">Перевод числа во все системы счисления, а текст — в байты UTF-8 сразу во всех СС.</p>
     <div class="card" style="padding:14px">
       <div class="conv-tabs">
@@ -627,7 +621,7 @@ const WORDS={
   neutralOff:['таймер выключен — не спеши','без таймера, решай спокойно']
 };
 
-const S={mode:'classic',diff:'easy',timerOn:true,score:0,streak:0,total:0,right:0,answered:false,timerId:null,timeLeft:0,current:null,hist:[],toastT:null,taskNo:0,autoT:null,autoIv:null};
+const S={mode:'classic',diff:'easy',timerOn:true,src:'rand',dst:'rand',score:0,streak:0,total:0,right:0,answered:false,timerId:null,timeLeft:0,current:null,hist:[],toastT:null,taskNo:0,autoT:null,autoIv:null};
 const $=id=>document.getElementById(id);
 const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
 const choice=a=>a[Math.floor(Math.random()*a.length)];
@@ -678,15 +672,18 @@ function genWord(diff){
 function genUTF8Question(){
   const word=genWord(S.diff);
   const chars=[...word].map(ch=>({ch,bytes:utf8Bytes(ch.codePointAt(0))}));
-  const targetBase=choice([2,8,16]);
+  const dstBase=(S.dst&&S.dst!=='rand'&&[2,8,16].includes(S.dst))?S.dst:choice([2,8,16]);
   const targetIndex=rnd(0,chars.length-1);
   const t=chars[targetIndex];
-  return{type:'utf8',word,chars,targetBase,targetIndex,expected:t.bytes.map(b=>b.toString(targetBase).toUpperCase()).join(' '),expectedArr:t.bytes.slice()};
+  return{type:'utf8',word,chars,targetBase:Number(dstBase),targetIndex,expected:t.bytes.map(b=>b.toString(dstBase).toUpperCase()).join(' '),expectedArr:t.bytes.slice()};
 }
 function genClassicQuestion(){
-  let b2;
-  const b1=choice([2,8,10,16]);
-  do{b2=choice([2,8,10,16]);}while(b2===b1);
+  const bases=[2,8,10,16];
+  let b1=(S.src&&S.src!=='rand')?S.src:choice(bases);
+  let b2=(S.dst&&S.dst!=='rand')?S.dst:choice(bases);
+  if(!bases.includes(b1))b1=choice(bases);
+  if(!bases.includes(b2))b2=choice(bases);
+  if(b1===b2)b2=choice(bases.filter(b=>b!==b1));
   const dec=rnd(0,DIFF[S.diff].max);
   return{type:'classic',srcBase:b1,dstBase:b2,dec,expected:dec.toString(b2).toUpperCase()};
 }
@@ -705,6 +702,7 @@ function newQuestion(){
   S.current=S.mode==='utf8'?genUTF8Question():genClassicQuestion();
   renderGame();
   renderDraftButtons();
+  stopTimer();
   if(S.timerOn)startTimer(DIFF[S.diff].time);
   const inp=$('answerInput');
   if(inp){inp.value='';inp.disabled=false;$('checkBtn').disabled=false;inp.focus({preventScroll:true});}
@@ -714,6 +712,7 @@ function newQuestion(){
 }
 
 function startTimer(sec){
+  if(!S.timerOn||!S.current){stopTimer();return;}
   S.timeLeft=sec;
   const wrap=$('timerWrap'),fg=$('ringFg'),num=$('ringNum');
   wrap.style.display='flex';
@@ -808,11 +807,13 @@ function renderGame(){
   html+=`<div class="answer-row">
     <input id="answerInput" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${ph}">
     <button class="btn btn-primary" id="checkBtn">Проверить</button>
+    <button class="btn btn-ghost btn-mini" id="nextBtn">ещё задачу</button>
   </div>
   <div id="feedback" class="neutral"></div>`;
   $('gameBody').innerHTML=html;
   $('answerInput').addEventListener('keydown',e=>{if(e.key==='Enter')submit('',false);});
   $('checkBtn').addEventListener('click',()=>submit('',false));
+  $('nextBtn').addEventListener('click',()=>newQuestion());
   renderStats();
 }
 
@@ -909,7 +910,7 @@ function renderMenu(){
   ];
   let h='';
   for(const m of modes){
-    h+=`<button class="mode-card" onclick="startMode('${m.id}')">
+    h+=`<button class="mode-card" onclick="openSetup('${m.id}')">
       <span class="tt-row"><b>${m.tt}</b></span>
       <div class="icon">${m.icon}</div>
       <h3>${m.title}</h3>
@@ -920,51 +921,82 @@ function renderMenu(){
   $('menuGrid').innerHTML=h;
 }
 
-function startMode(mode){
+function openSetup(mode){
   S.mode=mode;
-  show('screen-game');
-  renderSettings();
-  newQuestion();
+  stopTimer();
+  clearAuto();
+  show('screen-setup');
+  renderSetup();
   renderStats();
 }
 
-function renderSettings(){
+function renderSetup(){
+  if(!MODE_META[S.mode])S.mode='classic';
+  $('setupTitle').textContent=MODE_META[S.mode].title;
+  $('setupCaption').textContent='режим: '+MODE_META[S.mode].name+' · сложность: '+DIFF[S.diff].label;
+  $('setupDesc').textContent=MODE_META[S.mode].desc;
+  $('setupSettings').innerHTML=settingsBarHTML(true);
+  bindSetupBar();
+  syncSetupNote();
+}
+
+const MODE_META={
+  classic:{title:'Числа',name:'числа',desc:'Случайное число в одной СС — переведи в другую. Выбери исходную и целевую системы, сложность и таймер.'},
+  utf8:{title:'UTF-8 текст',name:'utf-8 текст',desc:'Текст + таблица UTF-8: находишь номер символа и переводишь его в выбранную СС. Выбери целевую систему и сложность.'}
+};
+
+function settingsBarHTML(startOnly){
+  const cls=s=>`<option value="${s}">${s}${SUF[s]} · ${BASES[s]}</option>`;
   let extra='';
   if(S.mode==='classic'){
-    const cls=s=>`<option value="${s}">${s}${SUF[s]} · ${BASES[s]}</option>`;
-    extra=`<select id="srcSel" aria-label="исходная СС">${['rand',2,8,10,16].map(s=>s==='rand'?'<option value="rand">исходная: любая</option>':cls(s)).join('')}</select>
+    extra=`<select id="srcSel" aria-label="исходная СС"><option value="rand" ${S.src==='rand'?'selected':''}>исходная: любая</option>${[2,8,10,16].map(s=>`<option value="${s}" ${S.src===s?'selected':''}>${s}${SUF[s]} · ${BASES[s]}</option>`).join('')}</select>
       <span style="color:var(--muted);flex:0">→</span>
-      <select id="dstSel" aria-label="целевая СС">${['rand',2,8,10,16].map(s=>s==='rand'?'<option value="rand">целевая: любая</option>':cls(s)).join('')}</select>`;
+      <select id="dstSel" aria-label="целевая СС"><option value="rand" ${S.dst==='rand'?'selected':''}>целевая: любая</option>${[2,8,10,16].map(s=>`<option value="${s}" ${S.dst===s?'selected':''}>${s}${SUF[s]} · ${BASES[s]}</option>`).join('')}</select>`;
   }else{
-    const cls=s=>`<option value="${s}">${s}${SUF[s]} · ${BASES[s]}</option>`;
-    extra=`<select id="dstSel" aria-label="целевая СС">${[2,8,16].map(cls).join('')}</select>`;
+    extra=`<select id="dstSel" aria-label="целевая СС">${[2,8,16].map(s=>`<option value="${s}" ${S.dst===s?'selected':''}>${s}${SUF[s]} · ${BASES[s]}</option>`).join('')}</select>`;
   }
-  $('gameSettings').innerHTML=`
-    <div class="termbar termbar-top">
-      <span class="dots">•••</span>
-      <span class="tt">настройки</span>
-      <span class="ttc">${S.mode==='classic'?'числа':'utf-8 текст'} · ${DIFF[S.diff].label}</span>
-    </div>
-    <div class="settings-bar">
-      <select id="modeSel" aria-label="режим">
+  let html='';
+  if(!startOnly){
+    html+=`<select id="modeSel" aria-label="режим">
         <option value="classic" ${S.mode==='classic'?'selected':''}>режим: числа</option>
         <option value="utf8" ${S.mode==='utf8'?'selected':''}>режим: utf-8 текст</option>
-      </select>
-      <select id="diffSel" aria-label="сложность">${Object.keys(DIFF).map(d=>`<option value="${d}" ${S.diff===d?'selected':''}>${DIFF[d].label}</option>`).join('')}</select>
+      </select>`;
+  }
+  html+=`<select id="diffSel" aria-label="сложность">${Object.keys(DIFF).map(d=>`<option value="${d}" ${S.diff===d?'selected':''}>${DIFF[d].label}</option>`).join('')}</select>
       ${extra}
-      <label class="switch"><input type="checkbox" id="timerToggle" ${S.timerOn?'checked':''}><span class="slider"></span><span>Таймер</span></label>
-      <button class="btn btn-primary" id="nextBtn" style="flex:0;flex-shrink:0">ещё задачу</button>
-    </div>`;
-  $('modeSel').addEventListener('change',e=>{S.mode=e.target.value;renderSettings();newQuestion();});
-  $('diffSel').addEventListener('change',e=>{S.diff=e.target.value;newQuestion();});
+      <label class="switch"><input type="checkbox" id="timerToggle" ${S.timerOn?'checked':''}><span class="slider"></span><span>Таймер</span></label>`;
+  return html;
+}
+
+function bindSetupBar(){
+  const mode=$('modeSel');
+  if(mode)mode.addEventListener('change',e=>{
+    S.mode=e.target.value;
+    if(S.mode==='utf8'&&![2,8,16].includes(S.dst))S.dst=2;
+    renderSetup();
+  });
+  $('diffSel').addEventListener('change',e=>{S.diff=e.target.value;renderSetup();});
   const src=$('srcSel'),dst=$('dstSel');
-  if(src)src.addEventListener('change',()=>newQuestion());
-  if(dst)dst.addEventListener('change',()=>newQuestion());
+  if(src)src.addEventListener('change',e=>{S.src=parseInt(e.target.value,10)||'rand';});
+  if(dst)dst.addEventListener('change',e=>{S.dst=parseInt(e.target.value,10)||'rand';});
   $('timerToggle').addEventListener('change',e=>{
     S.timerOn=e.target.checked;
-    newQuestion();
+    try{localStorage.setItem('ssq-timer',S.timerOn?'1':'0');}catch(err){}
+    syncSetupNote();
   });
-  $('nextBtn').addEventListener('click',()=>newQuestion());
+}
+function syncSetupNote(){
+  const n=$('setupTimerNote');
+  if(n)n.textContent=S.timerOn?'таймер включён: по '+DIFF[S.diff].time+' с на задачу — кольцо-часы в игре.' :'таймер выключен — кольцо-часы в игре скрыто, решай без спешки';
+}
+
+function startGame(){
+  stopTimer();
+  clearAuto();
+  $('setupSettings').innerHTML='';
+  show('screen-game');
+  newQuestion();
+  renderStats();
 }
 
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active');}
@@ -1020,6 +1052,25 @@ function showSettings(){
   stopTimer();
   clearAuto();
   show('screen-settings');
+  syncTimerUi();
+}
+let timerSettingInit=false;
+function syncTimerUi(){
+  const t=$('timerSettingToggle'),n=$('timerSettingNote');
+  if(t)t.checked=S.timerOn;
+  if(n)n.textContent=S.timerOn?('по '+DIFF[S.diff].time+' с на задачу, кольцо-таймер в игре'):'выключен — кольцо со временем в игре скрыто, решай без спешки';
+}
+function initSettingsTimer(){
+  const t=$('timerSettingToggle');
+  if(!t||timerSettingInit)return;
+  timerSettingInit=true;
+  t.addEventListener('change',()=>{
+    S.timerOn=t.checked;
+    try{localStorage.setItem('ssq-timer',S.timerOn?'1':'0');}catch(e){}
+    syncTimerUi();
+    if(S.current)newQuestion();
+  });
+  syncTimerUi();
 }
 
 let CONV_MODE='num';
@@ -1192,11 +1243,10 @@ function toBinary(text){
   return [...text].map(ch=>utf8Bytes(ch.codePointAt(0)).map(b=>b.toString(2).padStart(8,'0')).join(' ')).join(' ');
 }
 const GAME_NAME='РАЗРЯДКА';
-const BINARY_NAME=toBinary(GAME_NAME);
-$('brandTop').textContent=GAME_NAME;
-$('brandTop').title=GAME_NAME;
 $('gameTitle').textContent=GAME_NAME;
-$('gameTitleCaption').textContent='«'+GAME_NAME+'» — имя игры в двоичной системе счисления: '+BINARY_NAME;
+$('gameTitleCaption').textContent='«'+GAME_NAME+'» — имя игры в двоичной системе счисления: '+toBinary(GAME_NAME);
+
+$('setupStart').addEventListener('click',()=>startGame());
 
 $('draftArea').value=(()=>{try{return localStorage.getItem('ssq-draft')||'';}catch(e){return '';}})();
 $('draftArea').addEventListener('input',saveDraft);
@@ -1219,6 +1269,8 @@ show('screen-menu');
 initTheme();
 renderThemeButtons();
 initSound();
+try{S.timerOn=localStorage.getItem('ssq-timer')!=='0';}catch(e){}
+initSettingsTimer();
 
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>{
