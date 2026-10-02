@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#08090d">
+<meta name="description" content="САЙТСТРОЙ — визуальный конструктор сайтов без кода. Собирайте страницы из блоков и публикуйте в GitHub Pages.">
+<title>САЙТСТРОЙ — конструктор сайтов</title>
+<link rel="icon" href="icon-192.png">
+
+<!--
+  Стили конструктора. Лежат в неприменяемом script[type=text/x-css],
+  а init() оборачивает их через SB.scopeCSS(..., '.sbui') — так интерфейс
+  редактора не может повлиять на стили сайта внутри холста.
+-->
+<script type="text/x-css" id="ui-css">
+:root{
+  --sb-bg:#08090d;--sb-bg2:#0d0f16;--sb-panel:#11141c;--sb-panel2:#171b25;
+  --sb-line:#232838;--sb-line2:#2f3547;--sb-text:#dfe4f0;--sb-muted:#8891a8;
+  --sb-accent:#6366f1;--sb-accent2:#a855f7;--sb-ok:#22c55e;--sb-bad:#ef4444;
+}
+*{box-sizing:border-box}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0;padding:0}
+::selection{background:var(--sb-accent);color:#fff}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--sb-line2);border-radius:6px;border:2px solid var(--sb-bg)}
+::-webkit-scrollbar-thumb:hover{background:#3b4258}
+
+.topbar{display:flex;align-items:center;gap:12px;padding:0 14px;height:56px;flex:0 0 auto;
+  background:var(--sb-panel);border-bottom:1px solid var(--sb-line);position:relative;z-index:20}
+.brand{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--sb-muted);font-size:11.5px;
+  padding:7px 10px;border:1px solid var(--sb-line);border-radius:9px;white-space:nowrap}
+.brand:hover{color:var(--sb-text);border-color:var(--sb-line2)}
+.brand-name{font-weight:800;letter-spacing:.14em;font-size:13px;white-space:nowrap;
+  background:linear-gradient(135deg,var(--sb-accent),var(--sb-accent2));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.proj{display:flex;align-items:center;gap:6px;flex:1;min-width:0}
+.proj-title{background:var(--sb-bg2);border:1px solid var(--sb-line);border-radius:9px;padding:8px 11px;
+  width:100%;max-width:300px;min-width:70px;outline:none;font-weight:600;font-size:12.5px}
+.proj-title:focus{border-color:var(--sb-accent)}
+.sb-select{background:var(--sb-bg2);border:1px solid var(--sb-line);border-radius:9px;padding:8px 10px;
+  outline:none;max-width:180px;cursor:pointer;font-size:12px}
+.iconbtn{width:34px;height:34px;flex:0 0 34px;border-radius:9px;background:var(--sb-bg2);
+  border:1px solid var(--sb-line);color:var(--sb-muted);display:grid;place-items:center;font-size:14px}
+.iconbtn:hover{color:var(--sb-text);border-color:var(--sb-accent)}
+.iconbtn.danger:hover{color:var(--sb-bad);border-color:var(--sb-bad)}
+.tools{display:flex;align-items:center;gap:6px}
+.seg{display:flex;background:var(--sb-bg2);border:1px solid var(--sb-line);border-radius:9px;overflow:hidden}
+.seg button{width:34px;height:32px;color:var(--sb-muted);display:grid;place-items:center;font-size:13px}
+.seg button:hover{color:var(--sb-text)}
+.seg button.on{background:var(--sb-accent);color:#fff}
+.btn{background:var(--sb-bg2);border:1px solid var(--sb-line);border-radius:9px;padding:8px 13px;
+  color:var(--sb-text);font-weight:600;font-size:12px;white-space:nowrap}
+.btn:hover{border-color:var(--sb-accent)}
+.btn:disabled{opacity:.35;cursor:not-allowed;border-color:var(--sb-line)}
+.btn.primary{background:linear-gradient(135deg,var(--sb-accent),var(--sb-accent2));border-color:transparent;color:#fff}
+.btn.drawer-only{display:none}
+
+.workspace{flex:1;display:grid;grid-template-columns:252px minmax(0,1fr) 316px;
+  grid-template-rows:minmax(0,1fr);min-height:0}
+.rail{background:var(--sb-panel);display:flex;flex-direction:column;min-height:0}
+.rail-l{border-right:1px solid var(--sb-line)}
+.rail-r{border-left:1px solid var(--sb-line)}
+.tabs{display:flex;flex:0 0 auto;border-bottom:1px solid var(--sb-line)}
+.tabs button{flex:1;padding:12px 6px;border-bottom:2px solid transparent;color:var(--sb-muted);font-size:12px;font-weight:600}
+.tabs button:hover{color:var(--sb-text)}
+.tabs button.on{color:var(--sb-text);border-bottom-color:var(--sb-accent)}
+.rail-body{flex:1;overflow-y:auto;padding:14px}
+.sb-rail-note{margin:0 0 14px;color:var(--sb-muted);font-size:11px;line-height:1.6}
+.sb-rail-h{margin:16px 0 8px;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--sb-muted)}
+.sb-chips{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.sb-chip{display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 6px;
+  background:var(--sb-bg2);border:1px solid var(--sb-line);border-radius:10px;color:var(--sb-text);
+  font-size:10.5px;text-align:center;cursor:grab;transition:all .13s}
+.sb-chip:hover{border-color:var(--sb-accent);background:var(--sb-panel2);transform:translateY(-1px)}
+.sb-chip:active{cursor:grabbing}
+.sb-chip-ico{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;font-size:13px;
+  background:linear-gradient(135deg,rgba(99,102,241,.22),rgba(168,85,247,.22));color:var(--sb-accent2)}
+
+.sb-layers{display:grid;gap:5px}
+.sb-layer{display:flex;align-items:center;gap:7px;padding:7px 8px;background:var(--sb-bg2);
+  border:1px solid var(--sb-line);border-radius:9px;cursor:grab;font-size:11px}
+.sb-layer:hover{border-color:var(--sb-line2)}
+.sb-layer.sb-on{border-color:var(--sb-accent);background:rgba(99,102,241,.1)}
+.sb-layer.sb-drag{opacity:.4}
+.sb-layer.sb-over{border-color:var(--sb-accent2);border-style:dashed}
+.sb-layer-ico{width:20px;height:20px;border-radius:5px;display:grid;place-items:center;
+  background:var(--sb-panel2);color:var(--sb-accent2);font-size:11px}
+.sb-layer-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-layer-n{color:var(--sb-muted);font-size:10px}
+.sb-layer button{width:20px;height:20px;border-radius:5px;background:transparent;color:var(--sb-muted);
+  display:grid;place-items:center;font-size:11px}
+.sb-layer button:hover{background:var(--sb-panel2);color:var(--sb-text)}
+
+.stage{display:flex;flex-direction:column;min-width:0;min-height:0;overflow:hidden;
+  background:radial-gradient(600px 400px at 50% 0,rgba(99,102,241,.08),transparent 70%),var(--sb-bg)}
+.stage-bar{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:8px 14px;
+  border-bottom:1px solid var(--sb-line);background:rgba(8,9,13,.75)}
+.sb-stage-btn{padding:6px 11px;font-size:11px;border-radius:8px;background:var(--sb-bg2);
+  border:1px solid var(--sb-line);color:var(--sb-muted)}
+.sb-stage-btn:hover{color:var(--sb-text);border-color:var(--sb-accent)}
+.sb-stage-btn.on{color:#fff;background:var(--sb-accent);border-color:transparent}
+.status{margin-left:auto;color:var(--sb-muted);font-size:11px}
+.stage-scroll{flex:1;overflow:auto;padding:22px 20px 60px;display:flex;justify-content:center;align-items:flex-start}
+.device-fit{flex:0 0 auto;position:relative}
+.device{max-width:none;border-radius:14px;box-shadow:0 30px 80px rgba(0,0,0,.6);
+  flex:0 0 auto;transform-origin:top left}
+
+.insp-head{flex:0 0 auto;padding:13px 14px;border-bottom:1px solid var(--sb-line)}
+.insp-head b{display:block;font-size:13px}
+.insp-head span{color:var(--sb-muted);font-size:10.5px}
+.sb-insp-group{margin:0 0 20px;padding-bottom:18px;border-bottom:1px dashed var(--sb-line)}
+.sb-insp-group:last-child{border-bottom:0}
+.sb-insp-group h5{margin:0 0 12px;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--sb-muted)}
+.sb-field{display:block;margin-bottom:13px}
+.sb-fl{display:flex;align-items:center;gap:6px;margin-bottom:5px;color:var(--sb-muted);font-size:11px}
+.sb-fl b{color:var(--sb-accent2);font-weight:600}
+.sb-fl em{margin-left:auto;font-style:normal;color:var(--sb-line2)}
+.sb-field input,.sb-field textarea,.sb-field select{
+  width:100%;background:var(--sb-bg2);border:1px solid var(--sb-line);border-radius:9px;
+  padding:8px 10px;outline:none;font-size:12px}
+.sb-field textarea{resize:vertical;line-height:1.55}
+.sb-field input:focus,.sb-field textarea:focus,.sb-field select:focus{border-color:var(--sb-accent)}
+.sb-field input[type=range]{padding:0;accent-color:var(--sb-accent)}
+.sb-field input[type=color]{padding:2px;cursor:pointer}
+.sb-seg{display:flex;gap:4px}
+.sb-seg button{flex:1;padding:7px;background:var(--sb-bg2);border:1px solid var(--sb-line);border-radius:8px;color:var(--sb-muted)}
+.sb-seg button.on{border-color:var(--sb-accent);color:var(--sb-text);background:rgba(99,102,241,.12)}
+.sb-swatches{display:grid;grid-template-columns:repeat(8,1fr);gap:5px;margin-bottom:14px}
+.sb-swatch{height:24px;border-radius:7px;border:2px solid transparent}
+.sb-swatch.on{border-color:#fff}
+.sb-color{display:flex;gap:6px;align-items:center}
+.sb-color input[type=color]{width:38px;height:34px;flex:0 0 38px}
+.sb-hex{text-transform:lowercase}
+.sb-switch{display:flex;align-items:center;gap:9px;cursor:pointer;margin:10px 0;user-select:none}
+.sb-switch input{display:none}
+.sb-track{width:36px;height:20px;border-radius:999px;background:var(--sb-line);position:relative;
+  transition:background .16s;flex:0 0 36px}
+.sb-track::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;
+  background:#fff;transition:transform .16s}
+.sb-switch input:checked + .sb-track{background:var(--sb-accent)}
+.sb-switch input:checked + .sb-track::after{transform:translateX(16px)}
+.sb-switch-l{font-size:11.5px;color:var(--sb-muted)}
+
+.sb-rows{display:grid;gap:6px;margin-bottom:8px}
+.sb-row{display:grid;grid-template-columns:1fr 1fr auto;gap:5px;align-items:center}
+.sb-row input{padding:7px 8px;font-size:11px}
+.sb-row-box{display:block;border:1px solid var(--sb-line);border-radius:10px;padding:9px;background:var(--sb-bg2)}
+.sb-row-head{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.sb-row-head b{font-size:10.5px;color:var(--sb-accent2);letter-spacing:.06em}
+.sb-row-btns{margin-left:auto;display:flex;gap:3px}
+.sb-row-btns button{width:22px;height:22px;border-radius:6px;background:var(--sb-panel2);color:var(--sb-muted);font-size:11px}
+.sb-row-btns button:hover{color:#fff;background:var(--sb-accent)}
+.sb-x{width:26px;height:26px;border-radius:7px;color:var(--sb-muted);flex:0 0 26px}
+.sb-x:hover{color:var(--sb-bad);background:rgba(239,68,68,.12)}
+.sb-mini{width:100%;padding:8px;background:var(--sb-bg2);border:1px dashed var(--sb-line2);
+  border-radius:9px;color:var(--sb-muted);font-size:11px}
+.sb-mini:hover{border-color:var(--sb-accent);color:var(--sb-text)}
+.sb-mini-bad:hover{border-color:var(--sb-bad);color:var(--sb-bad)}
+.sb-insp-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0 0 16px}
+.sb-insp-actions .sb-mini{border-style:solid}
+.sb-insp-tip{margin:18px 0 0;color:var(--sb-line2);font-size:10.5px;line-height:1.6;text-align:center}
+.sb-imgpick{display:flex;gap:8px;align-items:center;margin-bottom:6px}
+.sb-imgpick img,.sb-imgpick-empty{width:56px;height:42px;object-fit:cover;border-radius:7px;border:1px solid var(--sb-line)}
+.sb-imgpick-empty{display:grid;place-items:center;font-size:9px;color:var(--sb-line2);text-align:center;padding:2px}
+.sb-imgpick-btns{display:grid;gap:4px;flex:1}
+
+.sb-modal-back{position:fixed;inset:0;background:rgba(3,4,8,.74);z-index:80}
+.sb-modal{position:fixed;inset:0;z-index:81;display:grid;place-items:center;padding:20px;pointer-events:none}
+.sb-modal-in{background:var(--sb-panel);border:1px solid var(--sb-line2);border-radius:16px;width:min(780px,100%);
+  max-height:88dvh;overflow:auto;padding:22px;box-shadow:0 40px 100px rgba(0,0,0,.7);pointer-events:auto}
+.sb-modal-h{display:flex;align-items:center;margin-bottom:6px}
+.sb-modal-h h3{margin:0;font-size:16px;flex:1}
+.sb-modal-note{margin:0 0 16px;color:var(--sb-muted);font-size:11.5px;line-height:1.65}
+.sb-btn-primary{display:inline-flex;align-items:center;justify-content:center;padding:10px 16px;border-radius:10px;
+  background:linear-gradient(135deg,var(--sb-accent),var(--sb-accent2));color:#fff;font-weight:700;
+  font-size:12px;text-decoration:none;width:100%}
+.sb-btn-primary:disabled{opacity:.6;cursor:progress}
+.sb-btn-ghost{display:inline-flex;align-items:center;justify-content:center;padding:9px 14px;border-radius:10px;
+  border:1px solid var(--sb-line);color:var(--sb-text);font-size:11.5px;text-decoration:none}
+.sb-btn-ghost:hover{border-color:var(--sb-accent)}
+.sb-btn-row{display:flex;gap:8px;flex-wrap:wrap}
+.sb-btn-row .sb-btn-ghost{flex:1}
+.sb-tpl{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sb-tpl-card{display:grid;gap:5px;text-align:left;padding:13px;background:var(--sb-bg2);
+  border:1px solid var(--sb-line);border-radius:12px;color:var(--sb-text)}
+.sb-tpl-card:hover{border-color:var(--sb-accent);transform:translateY(-2px)}
+.sb-tpl-card b{font-size:12.5px}
+.sb-tpl-card span{color:var(--sb-muted);font-size:10.5px;line-height:1.5}
+.sb-tpl-card em{font-style:normal;color:var(--sb-accent2);font-size:10px}
+.sb-tpl-preview{display:flex;gap:3px;height:54px;margin-bottom:4px}
+.sb-tpl-preview i{flex:1;background:var(--sb-line2);align-self:flex-end;height:10px;border-radius:3px}
+.sb-tpl-preview i:first-child{background:linear-gradient(135deg,var(--a),var(--b));flex:1 1 100%;height:auto;border-radius:6px}
+.sb-details{border:1px solid var(--sb-line);border-radius:12px;padding:0 14px;margin-bottom:10px}
+.sb-details[open]{padding-bottom:14px}
+.sb-details summary{padding:12px 0;cursor:pointer;font-size:12px;font-weight:600;list-style:none}
+.sb-details summary::before{content:'▸ ';color:var(--sb-accent)}
+.sb-details[open] summary::before{content:'▾ '}
+.sb-steps{margin:0 0 14px;padding-left:20px;color:var(--sb-muted);font-size:11.5px;line-height:1.8}
+.sb-form2{display:grid;gap:10px;margin-bottom:12px}
+.sb-form2 label{display:grid;gap:4px;font-size:11px;color:var(--sb-muted)}
+.sb-form2 input{background:var(--sb-bg2);border:1px solid var(--sb-line);border-radius:9px;
+  padding:9px 11px;outline:none;font-size:12px}
+.sb-form2 input:focus{border-color:var(--sb-accent)}
+.sb-log{margin-top:12px;max-height:220px;overflow:auto;background:var(--sb-bg);border:1px solid var(--sb-line);
+  border-radius:10px;padding:10px;font-size:11px;line-height:1.7}
+.sb-log-line.ok{color:var(--sb-ok)}
+.sb-log-line.bad{color:var(--sb-bad)}
+.sb-mt{margin-top:12px}
+#pubLink{word-break:break-all}
+
+.toasts{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:120;display:grid;gap:8px;pointer-events:none}
+.sb-toast{padding:11px 18px;border-radius:11px;background:var(--sb-panel2);border:1px solid var(--sb-line2);
+  font-size:12px;box-shadow:0 14px 40px rgba(0,0,0,.55);animation:sb-pop .22s ease}
+.sb-toast.ok{border-color:rgba(34,197,94,.5)}
+.sb-toast.bad{border-color:rgba(239,68,68,.5);color:#fca5a5}
+.sb-toast.out{opacity:0;transition:opacity .3s}
+@keyframes sb-pop{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+@media (max-width:1240px){
+  .workspace{grid-template-columns:226px minmax(0,1fr) 284px}
+  .brand-name{display:none}
+}
+@media (max-width:1040px){
+  .workspace{grid-template-columns:minmax(0,1fr)}
+  .rail{position:fixed;top:56px;bottom:0;width:290px;z-index:70;box-shadow:0 20px 60px rgba(0,0,0,.6);
+    transition:transform .22s ease}
+  .rail-l{left:0;transform:translateX(-102%)}
+  .rail-r{right:0;transform:translateX(102%);width:320px}
+  .rail-open-l .rail-l{transform:none}
+  .rail-open-r .rail-r{transform:none}
+  .btn.drawer-only{display:inline-flex}
+  .proj-title{max-width:170px}
+}
+@media (max-width:720px){
+  .topbar{gap:8px;padding:0 8px}
+  .sb-label{display:none}
+  .tools .btn{padding:8px 10px}
+  .stage-scroll{padding:12px 8px 40px}
+  .sb-grid2,.sb-tpl{grid-template-columns:1fr}
+}
+</script>
+
+<!--
+  Стили слоёв редактирования внутри холста. Применяются как есть: они
+  затрагивают только классы .sb-edit-*, которых нет в теме сайта.
+-->
+<script type="text/x-css" id="edit-css">
+.sb-canvas{background:var(--bg);color:var(--text);min-height:300px;overflow:hidden;position:relative}
+.sb-canvas .sb-page{overflow:hidden}
+.sb-canvas .sb-nav{position:relative}
+.sb-canvas .sb-hero-full{min-height:520px}
+.sb-canvas .sb-figure{padding-inline:1.25rem}
+.sb-canvas .sb-reveal{opacity:1!important;transform:none!important}
+
+.sb-edit-block{position:relative;cursor:pointer;outline:2px dashed transparent;outline-offset:-2px;
+  transition:outline-color .14s}
+.sb-edit-block:hover{outline-color:rgba(99,102,241,.4)}
+.sb-edit-block.sb-sel{outline:2px solid #6366f1}
+.sb-edit-block.sb-drag{opacity:.35}
+.sb-edit-content{pointer-events:none}
+
+.sb-edit-tools{position:absolute;top:7px;right:7px;z-index:60;display:none;align-items:center;gap:3px;
+  padding:4px;border-radius:10px;background:rgba(10,11,16,.94);border:1px solid #2a2f3d;
+  box-shadow:0 8px 24px rgba(0,0,0,.45)}
+.sb-edit-block:hover>.sb-edit-tools,.sb-edit-block.sb-sel>.sb-edit-tools{display:flex}
+.sb-edit-tag{padding:0 8px;font-size:10.5px;color:#c9d1e1;white-space:nowrap}
+.sb-edit-tools button{width:24px;height:24px;border-radius:7px;background:#181c26;color:#c9d1e1;font-size:12px}
+.sb-edit-tools button:hover{background:#6366f1;color:#fff}
+
+.sb-edit-block.sb-over{outline-color:#a855f7;outline-style:dashed}
+.sb-edit-block.sb-over-after::after{content:'';position:absolute;left:0;right:0;top:100%;height:3px;
+  background:#a855f7;z-index:70}
+.sb-edit-block.sb-over:not(.sb-over-after)::before{content:'';position:absolute;left:0;right:0;
+  bottom:100%;height:3px;background:#a855f7;z-index:70}
+.sb-edit-tail{height:12px;transition:height .12s,background .12s}
+.sb-edit-tail.sb-over-after{height:18px;background:#a855f7;border-radius:4px}
+.sb-edit-empty{display:grid;place-items:center;gap:6px;text-align:center;padding:70px 24px;color:var(--muted)}
+.sb-edit-empty b{color:var(--text);font-size:15px}
+.sb-edit-empty p{margin:0;max-width:38ch;font-size:13px;line-height:1.6}
+</script>
+
+<style>
+/* сброс и фон страницы: это нельзя обернуть в .sbui, поэтому пишем отдельно */
+html,body{height:100%;margin:0;background:#08090d;color:#dfe4f0;overflow:hidden;
+  font-family:'JetBrains Mono','Cascadia Mono',ui-monospace,Consolas,monospace;font-size:14px}
+/* каркас приложения: шапка + рабочая область на всю высоту окна, прокручиваются
+   только панели внутри, поэтому низ экрана всегда доступен */
+#app{height:100%;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+</style>
+</head>
+<body>
+<div class="sbui" id="app">
+  <header class="topbar">
+    <a class="brand" href="index.html" title="Вернуться в квиз">◂ РАЗРЯДКА</a>
+    <span class="brand-name">САЙТСТРОЙ</span>
+
+    <div class="proj">
+      <button type="button" class="btn drawer-only" id="btnRailL" title="Блоки">☰</button>
+      <input type="text" id="projTitle" class="proj-title" placeholder="Название сайта" spellcheck="false">
+      <select id="projList" class="sb-select" title="Мои проекты"></select>
+      <button type="button" class="iconbtn" id="btnProject" title="Файл проекта: импорт и экспорт">⇅</button>
+      <button type="button" class="iconbtn" id="btnNew" title="Новый пустой сайт">+</button>
+      <button type="button" class="iconbtn" id="btnDup" title="Дублировать проект">⧉</button>
+      <button type="button" class="iconbtn danger" id="btnDel" title="Удалить проект">✕</button>
+      <button type="button" class="btn drawer-only" id="btnRailR" title="Свойства блока">⚙</button>
+    </div>
+
+    <div class="tools">
+      <div class="seg" id="deviceSeg">
+        <button type="button" data-device="desktop" class="on" title="Десктоп, 1180px">▭</button>
+        <button type="button" data-device="tablet" title="Планшет, 834px">▯</button>
+        <button type="button" data-device="mobile" title="Телефон, 390px">▮</button>
+      </div>
+      <button type="button" class="btn" id="btnUndo" title="Отменить — Ctrl+Z">↶</button>
+      <button type="button" class="btn" id="btnRedo" title="Повторить — Ctrl+Shift+Z">↷</button>
+      <button type="button" class="btn" id="btnTemplate"><span class="sb-label">Шаблоны</span>▤</button>
+      <button type="button" class="btn" id="btnPreview"><span class="sb-label">Просмотр</span>👁</button>
+      <button type="button" class="btn" id="btnHtml" title="Скачать готовый index.html одним файлом">⤓<span class="sb-label">index.html</span></button>
+      <button type="button" class="btn primary" id="btnExport">Скачать и сайт</button>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <aside class="rail rail-l" id="railL">
+      <nav class="tabs" id="leftTabs">
+        <button type="button" data-tab="blocks" class="on">Блоки</button>
+        <button type="button" data-tab="layers">Слои</button>
+        <button type="button" data-tab="theme">Тема</button>
+      </nav>
+      <div class="rail-body" id="railBody"></div>
+    </aside>
+
+    <section class="stage">
+      <div class="stage-bar">
+        <button type="button" class="sb-stage-btn" id="siteSel">Настройки сайта</button>
+        <span class="status" id="status"></span>
+      </div>
+      <div class="stage-scroll" id="stageScroll">
+        <div class="device-fit" id="deviceFit">
+        <div class="device" id="device">
+          <div class="sb-canvas" id="canvas">
+            <style id="canvasStyle"></style>
+            <div class="sb-page" id="canvasPage"></div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="rail rail-r" id="railR">
+      <div class="insp-head" id="inspHead"></div>
+      <div class="rail-body" id="inspector"></div>
+    </aside>
+  </main>
+</div>
+
+<div class="sbui"><div id="modalRoot" hidden></div><div class="toasts" id="toasts"></div></div>
+
+<script src="sb/render.js"></script>
+<script src="sb/zip.js"></script>
+<script src="sb/github.js"></script>
+<script src="sb/builder.js"></script>
+<script>
+(function () {
+  function link(id, cls) {
+    var b = document.getElementById(id);
+    if (!b) return;
+    b.addEventListener('click', function () {
+      document.getElementById('app').classList.toggle(cls);
+    });
+  }
+  link('btnRailL', 'rail-open-l');
+  link('btnRailR', 'rail-open-r');
+  document.addEventListener('click', function (e) {
+    var app = document.getElementById('app');
+    if (!app.classList.contains('rail-open-l') && !app.classList.contains('rail-open-r')) return;
+    if (e.target.closest('.rail') || e.target.closest('.drawer-only')) return;
+    app.classList.remove('rail-open-l', 'rail-open-r');
+  });
+})();
+</script>
+</body>
+</html>

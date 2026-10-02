@@ -287,6 +287,8 @@ p.sub{color:var(--muted);margin:4px 0 18px;font-size:.82rem;line-height:1.6}
 .mode-card h3{margin:0;font-size:1rem;color:var(--accent)}
 .mode-card p{margin:0;color:var(--muted);font-size:.8rem;line-height:1.55;flex:1}
 .mode-card .tag{font-size:.72rem;color:var(--accent2);font-weight:700}
+a.mode-card{text-decoration:none}
+a.mode-card h3::after{content:' →';opacity:.6}
 
 .settings-bar{
   display:flex;gap:10px;flex-wrap:wrap;align-items:center;
@@ -983,7 +985,13 @@ function renderMenu(){
       <span class="tag">${m.tag}</span>
     </button>`;
   }
-  $('menuGrid').innerHTML=h;
+  $('menuGrid').innerHTML=h+`<a class="mode-card" href="site-builder.html">
+      <span class="tt-row"><b>▸ builder --publish</b></span>
+      <div class="icon">&lt;/&gt;</div>
+      <h3>САЙТСТРОЙ</h3>
+      <p>Конструктор сайтов без кода: перетаскивай блоки, настраивай тему и публикуй результат на GitHub Pages одной кнопкой.</p>
+      <span class="tag">[drag &amp; drop → pages]</span>
+    </a>`;
 }
 
 function openSetup(mode){

@@ -1,11 +1,16 @@
-const CACHE = 'ss-quiz-v7';
+const CACHE = 'ss-quiz-v8';
 const ASSETS = [
   './',
   './index.html',
   './manifest.webmanifest',
   './icon-192.png',
   './icon-512.png',
-  './7c9edee2-85c6-42bf-8d7d-8477d3ab1d44.png'
+  './7c9edee2-85c6-42bf-8d7d-8477d3ab1d44.png',
+  './site-builder.html',
+  './sb/render.js',
+  './sb/zip.js',
+  './sb/github.js',
+  './sb/builder.js'
 ];
 
 self.addEventListener('install', (e) => {

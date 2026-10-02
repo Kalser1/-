@@ -9,6 +9,15 @@
   "orientation": "any",
   "background_color": "#000000",
   "theme_color": "#000000",
+  "shortcuts": [
+    {
+      "name": "САЙТСТРОЙ — конструктор сайтов",
+      "short_name": "САЙТСТРОЙ",
+      "description": "Собрать сайт из блоков и опубликовать на GitHub Pages",
+      "url": "./site-builder.html",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    }
+  ],
   "icons": [
     { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
